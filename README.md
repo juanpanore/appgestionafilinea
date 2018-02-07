@@ -1,11 +1,11 @@
-FrontEnd GestionPagosPrevencionARL
+# FrontEnd GestionPagosPrevencionARL
 
-Herramientas previas requeridas:
+### Herramientas previas requeridas:
 
     - NodeJs
     - Yarn
 
-Configuración inicial:
+### Configuración inicial:
 
 1. Abrir una consola y ubicarse en la carpeta raíz del proyecto
 
