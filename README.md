@@ -3,7 +3,12 @@
 ### Herramientas previas requeridas:
 
     - NodeJs
+        [Descargar del sitio web oficial] (https://nodejs.org/en/download/)
+        Seguir el wizard de instalación.
+        
     - Yarn
+        [Decargar del sitio web oficial] (https://yarnpkg.com/en/docs/install)
+        Seguir el wizard de instalación.
 
 ### Configuración inicial:
 
