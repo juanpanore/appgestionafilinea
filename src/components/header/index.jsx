@@ -11,7 +11,7 @@ class Header extends Component {
     state = { open: false, text: "" };
 
     componentDidMount() {
-        axios.post(`http://192.168.2.119:8085/facturas/todas`).then(res => {
+        axios.post(`http://localhost:8085/facturas/todas`).then(res => {
             const text = res.data;
             this.setState({ text });
         });
