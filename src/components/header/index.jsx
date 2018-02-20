@@ -8,12 +8,14 @@ import PropTypes from "prop-types";
 import logo from "../../images/Logosura.png";
 
 class Header extends Component {
-    state = { open: false, text: "" };
+    state = {
+        open: false,
+        data: []
+    };
 
     componentDidMount() {
-        axios.post(`http://localhost:8085/facturas/todas`).then(res => {
-            const text = res.data;
-            this.setState({ text });
+        axios.get(`http://192.168.2.200:8080/api/v1/cars`).then(response => {
+            this.setState({ data: response.data });
         });
     }
 
@@ -59,7 +61,8 @@ class Header extends Component {
                         </Link>
                     </MenuItem>
                 </Drawer>
-                <div>Respuesta de servicio: {this.state.text}</div>
+                <p>Respuesta de servicio: </p>
+                {JSON.stringify(this.state.data, null, 2)}
             </div>
         );
     }
