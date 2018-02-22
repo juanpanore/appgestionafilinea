@@ -3,17 +3,17 @@ const path = require("path");
 const config = {
     entry: path.resolve(__dirname, "./src/index.jsx"),
     output: {
-        path: path.resolve(__dirname, "public"),
+        path: path.resolve(__dirname, "dist"),
         filename: "bundle.js"
     },
     resolve: {
         extensions: [".js", ".jsx", ".json", ".css"]
     },
     devServer: {
-        contentBase: path.join(__dirname, "public"),
+        contentBase: path.join(__dirname, "dist"),
         compress: true,
         port: 3000,
-        publicPath: "/public/",
+        distPath: "/dist/",
         historyApiFallback: true
     },
     module: {
