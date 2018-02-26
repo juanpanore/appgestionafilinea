@@ -12,7 +12,7 @@ const config = {
   devServer: {
     contentBase: path.join(__dirname, "public"),
     compress: true,
-    port: 3000,
+    port: 9630,
     publicPath: "/public/",
     historyApiFallback: true
   },
