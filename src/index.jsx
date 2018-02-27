@@ -1,9 +1,13 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { render } from "react-dom";
+<<<<<<< HEAD
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import Header from "./components/header";
+=======
+import Root from "./root";
+>>>>>>> master
 
 const muiTheme = getMuiTheme({
     appBar: {
@@ -17,6 +21,7 @@ const muiTheme = getMuiTheme({
     }
 });
 
+<<<<<<< HEAD
 const App = () => {
     render(
         <MuiThemeProvider muiTheme={muiTheme}>
@@ -35,3 +40,6 @@ if (module.hot) {
         App();
     });
 }
+=======
+render(<Root />, root);
+>>>>>>> master
