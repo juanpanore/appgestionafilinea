@@ -11,11 +11,9 @@ const common = require("./webpack.common");
 module.exports = merge(common, {
   mode: "production",
   entry: [path.resolve(__dirname, "./src/index.jsx")],
-  devtool: "source-map",
+  devtool: false,
   plugins: [
-    new UglifyJSPlugin({
-      sourceMap: true
-    }),
+    new UglifyJSPlugin(),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("production")
     })
