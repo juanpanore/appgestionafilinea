@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "start": "webpack-dev-server --open --config webpack.dev.js"
+    "start": "webpack-dev-server --color --progress --config webpack.dev.js"
   },
   "dependencies": {
     "axios": "^0.18.0",

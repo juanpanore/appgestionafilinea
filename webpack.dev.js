@@ -4,6 +4,8 @@ const merge = require("webpack-merge");
 const webpack = require("webpack");
 const path = require("path");
 const common = require("./webpack.common.js");
+// eslint-disable-next-line
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const serverPort = 3000;
 
@@ -14,16 +16,27 @@ module.exports = merge(common, {
     "react-hot-loader/patch",
     `webpack-dev-server/client?http://localhost:${serverPort}`,
     "webpack/hot/only-dev-server",
-    path.resolve(__dirname, "./src/index.jsx")
+    path.resolve(__dirname, "src", "index.jsx")
   ],
   devServer: {
-    inline: true,
-    hot: true,
     contentBase: path.join(__dirname, "dist"),
     compress: true,
     port: serverPort,
+    hot: true,
     publicPath: "/dist/",
-    historyApiFallback: true
+    historyApiFallback: true,
+    lazy: true,
+    filename: "[name].bundle.js",
+    open: true
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()]
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, "static", "index.html"),
+        to: path.resolve(__dirname, "dist", "index.html"),
+        toType: "file"
+      }
+    ])
+  ]
 });
