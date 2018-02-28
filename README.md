@@ -19,4 +19,4 @@ Yarn
 
 2. Ejecutar el comando "yarn install" para que se descarguen todas las dependencias requeridas.
 
-3. Ejecutar el comando "yarn dev" para correr el aplicativo localmente en la dirección "localhost:3000"
+3. Ejecutar el comando "yarn start" para correr el aplicativo localmente en la dirección "localhost:9630"
