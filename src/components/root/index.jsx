@@ -3,9 +3,9 @@ import { hot } from "react-hot-loader";
 import { BrowserRouter, Route } from "react-router-dom";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
-import Header from "../components/header";
-import FormRadicacion from "../components/forms/radicacion";
-import Status from "../components/status";
+import Header from "../header";
+import FormRadicacion from "../forms/radicacion";
+import Status from "../status";
 
 const muiTheme = getMuiTheme({
     appBar: {

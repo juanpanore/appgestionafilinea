@@ -23,6 +23,7 @@ class Header extends Component {
     handleClose = () => this.setState({ open: false });
 
     render() {
+        console.log(this.state.data);
         return (
             <div>
                 <div>
@@ -61,8 +62,8 @@ class Header extends Component {
                         </Link>
                     </MenuItem>
                 </Drawer>
-                <p>Respuesta de servicio: </p>
-                {JSON.stringify(this.state.data, null, 2)}
+                {/* <p>Respuesta de servicio: </p>
+                {JSON.stringify(this.state.data, null, 2)} */}
             </div>
         );
     }
