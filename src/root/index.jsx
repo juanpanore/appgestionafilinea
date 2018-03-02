@@ -27,6 +27,19 @@ const muiTheme = getMuiTheme({
         selectColor: "rgb(0,51,160)",
         color: "rgb(0,51,160)",
         calendarTextColor: "rgb(0,51,160)"
+    },
+    paper: {
+        margin: 20,
+        textAlign: "left",
+        display: "inline-block",
+        flex: 50,
+        padding: 20,
+        color: "RGB(0,51,160)"
+    },
+    raisedButton: {
+        color: "RGB(0,51,160)",
+        textColor: "RGB(255,255,255)",
+        fontSize: 20
     }
 });
 
