@@ -7,6 +7,7 @@ import Paper from "material-ui/Paper";
 import RaisedButton from "material-ui/RaisedButton";
 import Divider from "material-ui/Divider";
 import { Grid, Row, Col } from "react-flexbox-grid";
+import moment from "moment";
 
 const paperStyle = {
     margin: 20,
@@ -21,18 +22,43 @@ const dividerStyle = {
     thickness: 40
 };
 
-class FormRadicacion extends Component {
-    state = {
-        selectFieldValue: 1
-    };
+const customStyle = {
+    customWidth: {
+        width: 160
+    },
+    largeWidth: {
+        width: 300
+    }
+};
 
-    handleIdTypeChange = (event, index, selectFieldValue) => this.setState({ selectFieldValue });
-    handleIdChange = () => {};
-    handleSubmit = () => {};
+class FormRadicacion extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            id: "",
+            errorText: "",
+            idType: 1
+        };
+    }
+
+    handleIdTypeChange = (event, index, idType) => this.setState({ idType });
+    handleIdChange = event => {
+        console.log("Validating textField... value: ", this.id);
+        if (event.target.value === undefined || event.target.value === "") {
+            console.log("Setting errorText...");
+            this.setState({ errorText: "Este campo es requerido." });
+        } else {
+            this.setState({ errorText: "" });
+        }
+    };
+    handleSubmit = event => {
+        console.log("Submit form...");
+        this.handleIdChange(event);
+    };
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleIdChange}>
                 <Grid>
                     <Row>
                         <Paper style={paperStyle} zDepth={5}>
@@ -46,8 +72,9 @@ class FormRadicacion extends Component {
                                 <Col xs>
                                     <SelectField
                                         floatingLabelText="Tipo identificación"
-                                        value={this.state.selectFieldValue}
+                                        value={this.state.idType}
                                         onChange={this.handleIdTypeChange}
+                                        style={customStyle.customWidth}
                                     >
                                         <MenuItem value={1} primaryText="NIT" />
                                         <MenuItem value={2} primaryText="CC" />
@@ -57,14 +84,29 @@ class FormRadicacion extends Component {
                                 <Col xs>
                                     <TextField
                                         floatingLabelText="Número identificación"
-                                        onChange={this.handleIdChange}
+                                        value={this.state.id}
+                                        onChange={e => this.setState({ id: e.target.value, errorText: "" })}
+                                        maxLength={20}
+                                        errorText={this.state.errorText}
+                                        style={customStyle.customWidth}
                                     />
                                 </Col>
                                 <Col xs>
-                                    <TextField floatingLabelText="Nombre empresa" />
+                                    <TextField
+                                        floatingLabelText="Nombre empresa"
+                                        maxLength={50}
+                                        style={customStyle.largeWidth}
+                                    />
                                 </Col>
                                 <Col xs>
-                                    <TextField floatingLabelText="Micrositio (Si/No)" maxLength={2} />
+                                    <TextField
+                                        floatingLabelText="Micrositio (Si/No)"
+                                        value={this.state.micrositio}
+                                        maxLength={2}
+                                        style={{ width: 130 }}
+                                        defaultValue="SI"
+                                        disabled="true"
+                                    />
                                 </Col>
                             </Row>
                         </Paper>
@@ -79,19 +121,36 @@ class FormRadicacion extends Component {
                             <Divider />
                             <Row>
                                 <Col xs>
-                                    <TextField floatingLabelText="Número factura" type="number" />
+                                    <TextField floatingLabelText="Número factura" value={this.state.billNumber} />
                                 </Col>
                                 <Col xs>
-                                    <TextField floatingLabelText="Valor factura" type="number" />
+                                    <TextField
+                                        floatingLabelText="Valor factura"
+                                        value={this.state.billValue}
+                                        type="number"
+                                    />
                                 </Col>
                                 <Col xs>
-                                    <DatePicker floatingLabelText="Fecha factura (YYYY-MM-DD)" />
+                                    <DatePicker
+                                        floatingLabelText="Fecha factura (DD-MM-YYYY)"
+                                        formatDate={date => moment(date).format("DD-MM-YYYY")}
+                                    />
                                 </Col>
                                 <Col xs>
-                                    <DatePicker floatingLabelText="Fecha llegada (YYYY-MM-DD)" />
+                                    <DatePicker
+                                        floatingLabelText="Fecha llegada (DD-MM-YYYY)"
+                                        formatDate={date => moment(date).format("DD-MM-YYYY")}
+                                    />
                                 </Col>
                                 <Col xs={3}>
-                                    <TextField floatingLabelText="Observación" multiLine="true" rows={2} rowsMax={6} />
+                                    <TextField
+                                        floatingLabelText="Observación"
+                                        value={this.state.observation}
+                                        multiLine="true"
+                                        rows={2}
+                                        rowsMax={6}
+                                        style={customStyle.largeWidth}
+                                    />
                                 </Col>
                             </Row>
                         </Paper>
@@ -102,7 +161,7 @@ class FormRadicacion extends Component {
                         <Col xs={11}>
                             <Row end="xs">
                                 <Col xs={3}>
-                                    <RaisedButton label="Radicar" />
+                                    <RaisedButton label="Radicar" onClick={this.handleIdChange} />
                                 </Col>
                             </Row>
                         </Col>

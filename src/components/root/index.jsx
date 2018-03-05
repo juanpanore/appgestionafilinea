@@ -20,7 +20,8 @@ const muiTheme = getMuiTheme({
     textField: {
         borderColor: "rgb(120,190,32)",
         focusColor: "rgb(0,51,160)",
-        floatingLabelColor: "rgb(120,190,32)"
+        floatingLabelColor: "rgb(120,190,32)",
+        errorColor: "rgb(244,67,54)"
     },
     datePicker: {
         headerColor: "rgb(120,190,32)",
