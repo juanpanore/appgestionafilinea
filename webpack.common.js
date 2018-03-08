@@ -7,8 +7,8 @@ const config = {
     context: __dirname,
     output: {
         filename: "[name].bundle.js",
-        publicPath: "/dist/",
-        path: path.resolve(__dirname, "dist")
+        publicPath: "/gestionpagosprevencion/dist/",
+        path: path.resolve(__dirname, "gestionpagosprevencion/dist")
     },
     resolve: {
         extensions: [".js", ".jsx", ".json", ".css"]

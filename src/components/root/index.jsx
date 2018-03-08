@@ -9,7 +9,7 @@ import Status from "../status";
 
 const muiTheme = getMuiTheme({
     appBar: {
-        color: "rgb(120,190,32)"
+        color: "rgb(0,51,160)"
     },
     tabs: {
         backgroundColor: "rgb(120,190,32)"
@@ -28,18 +28,26 @@ const muiTheme = getMuiTheme({
         selectColor: "rgb(0,51,160)",
         color: "rgb(0,51,160)",
         calendarTextColor: "rgb(0,51,160)"
+    },
+    raisedButton: {
+        color: "rgb(0,51,160)",
+        textColor: "rgb(255,255,255)"
     }
 });
 
+const radicacionForm = {
+    dni_type: "N",
+    micrositio: "Si"
+};
 const App = () => (
     <MuiThemeProvider muiTheme={muiTheme}>
         <BrowserRouter>
             <Fragment>
                 <Header title="ARL" />
                 <Route path="/status" component={Status} />
+                <Route path="/" component={props => <FormRadicacion {...props} bill={radicacionForm} />} />
             </Fragment>
         </BrowserRouter>
-        <FormRadicacion />
     </MuiThemeProvider>
 );
 

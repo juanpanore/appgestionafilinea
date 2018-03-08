@@ -19,11 +19,11 @@ module.exports = merge(common, {
         path.resolve(__dirname, "src", "index.jsx")
     ],
     devServer: {
-        contentBase: path.join(__dirname, "dist"),
+        contentBase: path.join(__dirname, "gestionpagosprevencion/dist"),
         compress: true,
         port: serverPort,
         hot: true,
-        publicPath: "/dist/",
+        publicPath: "/gestionpagosprevencion/dist/",
         historyApiFallback: true,
         lazy: true,
         filename: "[name].bundle.js",
@@ -34,7 +34,7 @@ module.exports = merge(common, {
         new CopyWebpackPlugin([
             {
                 from: path.resolve(__dirname, "static", "index.html"),
-                to: path.resolve(__dirname, "dist", "index.html"),
+                to: path.resolve(__dirname, "gestionpagosprevencion/dist", "index.html"),
                 toType: "file"
             }
         ])
