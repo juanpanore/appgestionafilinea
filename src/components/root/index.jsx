@@ -37,7 +37,8 @@ const muiTheme = getMuiTheme({
 
 const radicacionForm = {
     dni_type: "N",
-    micrositio: "Si"
+    micrositio: "Si",
+    billValue: 0
 };
 const App = () => (
     <MuiThemeProvider muiTheme={muiTheme}>

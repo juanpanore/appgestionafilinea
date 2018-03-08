@@ -11,6 +11,7 @@ import DatePicker from "material-ui/DatePicker";
 import Paper from "material-ui/Paper";
 import RaisedButton from "material-ui/RaisedButton";
 import Divider from "material-ui/Divider";
+import { checkNotNull, checkArgument } from "../../../functions/validations";
 
 const paperStyle = {
     margin: 20,
@@ -163,46 +164,40 @@ const validateDates = values => {
     const oldYear = moment().subtract(1, "years");
     if (!values.billDate) {
         errors.billDate = "Se requiere la fecha de factura.";
-    } else if (!values.billArrivalDate) {
+    }
+    if (!values.billArrivalDate) {
         errors.billArrivalDate = "Se requiere la fecha de llegada de la factura.";
-    } else if (moment(values.billDate).isAfter(new Date(), "day")) {
+    }
+    if (moment(values.billDate).isAfter(new Date(), "day")) {
         errors.billDate = "La fecha es superior a la fecha actual.";
-    } else if (moment(values.billDate).isBefore(Oldyears, "day")) {
+    }
+    if (moment(values.billDate).isBefore(Oldyears, "day")) {
         errors.billDate = "La fecha no puede ser 5 años inferior a la fecha actual";
-    } else if (moment(values.billArrivalDate).isAfter(new Date(), "day")) {
+    }
+    if (moment(values.billArrivalDate).isAfter(new Date(), "day")) {
         errors.billArrivalDate = "La fecha es superior a la fecha actual.";
-    } else if (moment(values.billArrivalDate).isBefore(moment(values.billDate), "day")) {
+    }
+    if (moment(values.billArrivalDate).isBefore(moment(values.billDate), "day")) {
         errors.billArrivalDate = "Fecha inferior a la fecha de factura.";
-    } else if (moment(values.billArrivalDate).isBefore(oldYear, "day")) {
+    }
+    if (moment(values.billArrivalDate).isBefore(oldYear, "day")) {
         errors.billArrivalDate = "Fecha anterior a un año de la fecha actual.";
     }
     return errors;
 };
 const validateRequired = values => {
-    const errors = {};
-    if (!values.dni_provider) {
-        errors.dni_provider = "Se requiere DNI del proveedor.";
-    } else if (!values.name) {
-        errors.name = "Se requiere el nombre del proveedor.";
-    } else if (!values.billNumber) {
-        errors.billNumber = "Se requiere el número de factura.";
-    } else if (!values.billValue) {
-        errors.billValue = "Se requiere el valor de la factura.";
-    } else if (values.billValue) {
-        if (values.billValue < 0) {
-            errors.billValue = "El valos de la factura no puede ser negativo.";
-        }
-    }
-    return errors;
+    const errors = {
+        dni_provider: checkNotNull(values.dni_provider, "Se requiere DNI del proveedor."),
+        name: checkNotNull(values.name, "Se requiere el nombre del proveedor."),
+        billNumber: checkNotNull(values.billNumber, "Se requiere el número de factura."),
+        billValue:
+            checkNotNull(values.billValue, "Se requiere el valor de la factura.") ||
+            checkArgument(values.billValue < 0, "El valor de la factura no puede ser negativo.") ||
+            checkArgument(values.billValue === 0, "El valor de la factura no puede ser cero.")
+    };
+    return _.omitBy(errors, _.isNil);
 };
-const validate = values => {
-    let errors = {};
-    errors = validateRequired(values);
-    errors = validateDates(values);
-
-    console.log(errors);
-    return errors;
-};
+const validate = values => _.assign({}, validateRequired(values), validateDates(values));
 
 FormRadicacion.defaultProps = {
     values: [],
@@ -220,8 +215,8 @@ FormRadicacion.propTypes = {
         micrositio: PropTypes.string,
         billNumber: PropTypes.string,
         billValue: PropTypes.number,
-        billDate: PropTypes.string,
-        billArrivalDate: PropTypes.string,
+        billDate: PropTypes.instanceOf(Date),
+        billArrivalDate: PropTypes.instanceOf(Date),
         billObservation: PropTypes.string
     }),
     errors: PropTypes.shape({
@@ -230,7 +225,7 @@ FormRadicacion.propTypes = {
         name: PropTypes.string,
         micrositio: PropTypes.string,
         billNumber: PropTypes.string,
-        billValue: PropTypes.number,
+        billValue: PropTypes.string,
         billDate: PropTypes.string,
         billArrivalDate: PropTypes.string,
         billObservation: PropTypes.string
@@ -239,7 +234,7 @@ FormRadicacion.propTypes = {
     handleChange: PropTypes.func,
     handleSubmit: PropTypes.func,
     setFieldValue: PropTypes.func.isRequired,
-    touched: PropTypes.string.isRequired
+    touched: PropTypes.shape().isRequired
 };
 
 export default withFormik({
