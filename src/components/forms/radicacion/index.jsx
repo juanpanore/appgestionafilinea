@@ -192,8 +192,7 @@ const validateRequired = values => {
         billNumber: checkNotNull(values.billNumber, "Se requiere el número de factura."),
         billValue:
             checkNotNull(values.billValue, "Se requiere el valor de la factura.") ||
-            checkArgument(values.billValue < 0, "El valor de la factura no puede ser negativo.") ||
-            checkArgument(values.billValue === 0, "El valor de la factura no puede ser cero.")
+            checkArgument(values.billValue <= 0, "El valor de la factura debe ser mayor a cero.")
     };
     return _.omitBy(errors, _.isNil);
 };
