@@ -17,9 +17,9 @@ class Header extends Component {
   };
 
   componentDidMount() {
-    axios.get(`http://192.168.2.200:8080/api/v1/cars`).then(response => {
+    /* axios.get(`http://192.168.2.200:8080/api/v1/cars`).then(response => {
       this.setState({ data: response.data });
-    });
+    }); */
   }
 
   handleToggle = () => this.setState({ open: !this.state.open });

@@ -91,9 +91,11 @@ class FormRadicacion extends Component {
       if (_.isEqual(statusProvider, SEARCH_PROVIDER_DATA_FULFILLED_DATA)) {
         setFieldValue("name", provider.providerName);
         setFieldValue("micrositio", _.get(provider, "micrositio", false) ? "Sí" : "No");
+        this.props.cleanData();
       } else {
         setFieldValue("name", "");
         setFieldValue("micrositio", "");
+        this.props.cleanData();
       }
     }
     if (!_.isEqual(prevProps.statusBill, statusBill)) {
