@@ -191,11 +191,21 @@ export const sendBillEpic$ = action$ =>
       .catch(error => {
         const { response } = error;
         if (_.isEqual(response.status, 500)) {
-          toggleSnackbar("Error en el servidor.");
+          return Observable.of(
+            httpError(SEND_BILL_DATA_FAILED, error),
+            toggleSnackbar("Error en el servidor.")
+          );
         }
         if (_.isEqual(response.status, 400)) {
-          toggleSnackbar("Error validando la factura.");
+          return Observable.of(
+            httpError(SEND_BILL_DATA_FAILED, error),
+            toggleSnackbar("Error validando la factura.")
+          );
         }
+        return Observable.of(
+          httpError(SEND_BILL_DATA_FAILED, error),
+          toggleSnackbar("Ocurrió un error inesperado, por favor, intentelo de nuevo.")
+        );
       })
       .startWith({ type: SEND_BILL_DATA_IN_PROGRESS });
   });

@@ -29,7 +29,7 @@ const muiTheme = getMuiTheme({
     errorColor: "rgb(244,67,54)"
   },
   datePicker: {
-    headerColor: "rgb(120,190,32)",
+    headerColor: "rgb(0,51,160)",
     selectColor: "rgb(0,51,160)",
     color: "rgb(0,51,160)",
     calendarTextColor: "rgb(0,51,160)"
