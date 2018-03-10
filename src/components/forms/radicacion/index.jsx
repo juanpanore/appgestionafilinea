@@ -19,7 +19,6 @@ import {
   sendBillData as sbd,
   cleanData as cd,
   cleanBillData as cbd,
-  SEARCH_PROVIDER_DATA_FULFILLED_DATA,
   SEND_BILL_DATA_FULFILLED
 } from "./ducks";
 
@@ -42,7 +41,6 @@ class FormRadicacion extends Component {
     cleanBillData: func.isRequired,
     provider: shape().isRequired,
     loadingProvider: bool.isRequired,
-    statusProvider: string.isRequired,
     sendingBill: bool.isRequired,
     statusBill: string.isRequired,
     resetForm: func.isRequired,
@@ -86,17 +84,14 @@ class FormRadicacion extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { statusProvider, provider, setFieldValue, statusBill } = this.props;
-    if (!_.isEqual(prevProps.statusProvider, statusProvider)) {
-      if (_.isEqual(statusProvider, SEARCH_PROVIDER_DATA_FULFILLED_DATA)) {
-        setFieldValue("name", provider.providerName);
-        setFieldValue("micrositio", _.get(provider, "micrositio", false) ? "Sí" : "No");
-        this.props.cleanData();
-      } else {
-        setFieldValue("name", "");
-        setFieldValue("micrositio", "");
-        this.props.cleanData();
-      }
+    const { provider, setFieldValue, statusBill, values } = this.props;
+    const providerName = _.get(provider, "providerName", "");
+    const microsite = _.get(provider, "micrositio", false) ? "Sí" : "No";
+    if (providerName !== values.name) {
+      setFieldValue("name", provider.providerName);
+    }
+    if (microsite !== values.micrositio) {
+      setFieldValue("micrositio", microsite);
     }
     if (!_.isEqual(prevProps.statusBill, statusBill)) {
       if (!_.isEqual(statusBill, SEND_BILL_DATA_FULFILLED)) {
@@ -337,7 +332,6 @@ function mapStateToProps({ settlement }) {
   return {
     provider: settlement.get("provider"),
     loadingProvider: settlement.get("loadingProvider"),
-    statusProvider: settlement.get("statusProvider"),
     sendingBill: settlement.get("sendingBill"),
     statusBill: settlement.get("statusBill")
   };
