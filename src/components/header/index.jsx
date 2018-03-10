@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
 import Drawer from "material-ui/Drawer";
 import MenuItem from "material-ui/MenuItem";
-import axios from "axios";
 import PropTypes from "prop-types";
 import logo from "../../images/Logosura.png";
 /* import AppSelector from "../appSelection"; */
