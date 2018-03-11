@@ -94,8 +94,9 @@ class FormRadicacion extends Component {
       setFieldValue("micrositio", microsite);
     }
     if (!_.isEqual(prevProps.statusBill, statusBill)) {
-      if (!_.isEqual(statusBill, SEND_BILL_DATA_FULFILLED)) {
+      if (_.isEqual(statusBill, SEND_BILL_DATA_FULFILLED)) {
         this.props.resetForm();
+        this.props.cleanData();
       }
     }
   }
@@ -162,6 +163,7 @@ class FormRadicacion extends Component {
                   maxLength={50}
                   errorText={touched.name && errors.name}
                   fullWidth
+                  disabled
                 />
               </Col>
               <Col xs={1}>
