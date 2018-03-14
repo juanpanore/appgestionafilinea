@@ -248,7 +248,6 @@ export const searchDocTypesEpic$ = action$ =>
         const promise = axios.get(url);
         return Observable.fromPromise(promise)
             .map(httpFulfilled(SEARCH_DOC_TYPES_DATA_FULFILLED))
-            .concatMap(resultAction => Observable.of(resultAction))
             .catch(error => {
                 const { response } = error;
                 if (_.isEqual(response.status, 404)) {
