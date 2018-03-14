@@ -5,8 +5,8 @@ import settlement from "../components/forms/radicacion/ducks";
 import snackbar from "../components/toast/ducks";
 
 export default combineReducers({
-  appSelector,
-  searchPreventionBill,
-  settlement,
-  snackbar
+    appSelector,
+    searchPreventionBill,
+    settlement,
+    snackbar
 });

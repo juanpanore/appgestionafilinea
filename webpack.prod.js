@@ -16,7 +16,7 @@ module.exports = merge(common, {
     entry: [path.resolve(__dirname, "./src/index.jsx")],
     devtool: false,
     plugins: [
-        new CleanWebpackPlugin(["gestionpagosprevencion/dist"]),
+        new CleanWebpackPlugin(["dist/gestionpagosprevencion"]),
         new UglifyJSPlugin(),
         new webpack.DefinePlugin({
             "process.env.NODE_ENV": JSON.stringify("production")
@@ -24,7 +24,7 @@ module.exports = merge(common, {
         new CopyWebpackPlugin([
             {
                 from: path.resolve(__dirname, "static", "index.html"),
-                to: path.resolve(__dirname, "gestionpagosprevencion/dist", "index.html"),
+                to: path.resolve(__dirname, "dist/gestionpagosprevencion", "index.html"),
                 toType: "file"
             }
         ])
