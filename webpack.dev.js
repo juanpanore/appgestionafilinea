@@ -16,7 +16,7 @@ module.exports = merge(common, {
         "react-hot-loader/patch",
         `webpack-dev-server/client?http://localhost:${serverPort}`,
         "webpack/hot/only-dev-server",
-        path.resolve(__dirname, "src", "index.jsx")
+        path.resolve(__dirname, "src", "index.jsx"),
     ],
     devServer: {
         contentBase: path.join(__dirname, "dist/gestionpagosprevencion"),
@@ -27,7 +27,7 @@ module.exports = merge(common, {
         historyApiFallback: true,
         lazy: true,
         filename: "[name].bundle.js",
-        open: true
+        open: true,
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
@@ -35,8 +35,8 @@ module.exports = merge(common, {
             {
                 from: path.resolve(__dirname, "static", "index.html"),
                 to: path.resolve(__dirname, "dist/gestionpagosprevencion", "index.html"),
-                toType: "file"
-            }
-        ])
-    ]
+                toType: "file",
+            },
+        ]),
+    ],
 });

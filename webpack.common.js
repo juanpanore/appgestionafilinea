@@ -8,15 +8,15 @@ const config = {
     output: {
         filename: "[name].bundle.js",
         publicPath: "/dist/gestionpagosprevencion/",
-        path: path.resolve(__dirname, "dist/gestionpagosprevencion")
+        path: path.resolve(__dirname, "dist/gestionpagosprevencion"),
     },
     resolve: {
-        extensions: [".js", ".jsx", ".json", ".css"]
+        extensions: [".js", ".jsx", ".json", ".css"],
     },
     stats: {
         colors: true,
         reasons: true,
-        chunks: true
+        chunks: true,
     },
 
     module: {
@@ -27,29 +27,29 @@ const config = {
                 loader: "eslint-loader",
                 exclude: /node_modules/,
                 options: {
-                    fix: true
-                }
+                    fix: true,
+                },
             },
             {
                 test: /.jsx?$/,
-                use: "babel-loader"
+                use: "babel-loader",
             },
             {
                 test: /\.(png|jpg|gif)$/,
                 use: [
                     {
                         loader: "file-loader",
-                        options: {}
-                    }
-                ]
+                        options: {},
+                    },
+                ],
             },
             {
                 test: /\.css$/,
                 loader: "style-loader!css-loader",
-                include: /flexboxgrid/
-            }
-        ]
-    }
+                include: /flexboxgrid/,
+            },
+        ],
+    },
 };
 
 module.exports = config;
