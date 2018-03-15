@@ -43,9 +43,9 @@ class MenuBar extends Component {
                     />
                 </div>
                 <div style={styles.contentDashboard}>
-                    <Row style={{ border: "1px solid #000", width: "100%", margin: 0, boxSizing: "border-box" }}>
-                        <Col style={{ border: "1px solid #000", width: 60, boxSizing: "border-box" }}>a</Col>
-                        <Col xs style={{ border: "1px solid #000", boxSizing: "border-box", padding: 5 }}>
+                    <Row style={{ border: "0px solid #000", width: "100%", margin: 0, boxSizing: "border-box" }}>
+                        <Col style={{ border: "0px solid #000", width: 60, boxSizing: "border-box" }}>a</Col>
+                        <Col xs style={{ border: "0px solid #000", boxSizing: "border-box", padding: 5 }}>
                             <Switch>
                                 <Redirect exact from="/" to="/gestionpagosprevencion" />
                                 <Route exact path="/gestionpagosprevencion" component={FormRadicacion} />
