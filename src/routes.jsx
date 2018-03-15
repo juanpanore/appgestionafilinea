@@ -1,14 +1,11 @@
 import React, { Fragment } from "react";
 import { hot } from "react-hot-loader";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
-import Header from "./components/header";
-import ResultsDashboard from "./components/prevention/searchPrevention/resultsDashboard";
-import FormRadicacion from "./components/forms/radicacion";
-import Status from "./components/status";
 import Snackbar from "./components/toast";
+import Dashboard from "./components/dashboard";
 
 import createStore from "./store";
 
@@ -49,10 +46,7 @@ const App = () => (
             <Fragment>
                 <BrowserRouter>
                     <Fragment>
-                        <Header title="ARL" />
-                        <Route path="/bandeja" component={ResultsDashboard} />
-                        <Route path="/status" component={Status} />
-                        <Route path="/" component={FormRadicacion} />
+                        <Dashboard title="ARL" />
                     </Fragment>
                 </BrowserRouter>
                 <Snackbar />
