@@ -4,18 +4,18 @@ import createReducer from "../../util/createReducer";
 const CHANGE_APP = "payments/app-selector/CHANGE_APP";
 
 const initialState = Map({
-  application: "prevention"
+    application: "prevention",
 });
 
 export default createReducer(initialState, {
-  [CHANGE_APP]: (state, action) => state.set("application", action.payload.application)
+    [CHANGE_APP]: (state, action) => state.set("application", action.payload.application),
 });
 
 export function changeApp(application) {
-  return {
-    type: CHANGE_APP,
-    payload: {
-      application
-    }
-  };
+    return {
+        type: CHANGE_APP,
+        payload: {
+            application,
+        },
+    };
 }

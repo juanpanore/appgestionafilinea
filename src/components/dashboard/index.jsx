@@ -3,44 +3,61 @@ import { Row, Col } from "react-flexbox-grid";
 import AppBar from "material-ui/AppBar";
 import PropTypes from "prop-types";
 import { Route, Redirect, Switch } from "react-router-dom";
-import ResultsDashboard from "../prevention/searchPrevention/resultsDashboard";
-import FormRadicacion from "../forms/radicacion";
-import Status from "../status";
+import Bill from "../../containers/billList";
+import FormRadicacion from "../../containers/radication";
+import Status from "../../containers/status";
 import logo from "../../images/Logosura.png";
 
+const styles = {
+    contentDashboard: {
+        display: "block",
+        boxSizing: "border-box",
+        margin: 0,
+    },
+};
+
 class MenuBar extends Component {
+    static propTypes = {
+        title: PropTypes.string.isRequired,
+    };
+
     state = {};
 
     render() {
         const { title } = this.props;
         return (
             <div>
-                <div style={{ width: "100%" }}>
-                    <img src={logo} alt="Sura" width="140dp" height="60dp" />
+                <div style={styles.contentDashboard}>
+                    <div style={{ width: "100%" }}>
+                        <img src={logo} alt="Sura" width="140dp" height="60dp" />
+                    </div>
+                    <AppBar
+                        title={title}
+                        onLeftIconButtonClick={this.handleToggle}
+                        iconElementRight={
+                            <Row>
+                                <Col xs={9}>{/* <SearchPreventionBill /> */}</Col>
+                                <Col xs={3}>{/* <AppSelector /> */}</Col>
+                            </Row>
+                        }
+                    />
                 </div>
-                <AppBar
-                    title={title}
-                    onLeftIconButtonClick={this.handleToggle}
-                    iconElementRight={
-                        <Row>
-                            <Col xs={9}>{/* <SearchPreventionBill /> */}</Col>
-                            <Col xs={3}>{/* <AppSelector /> */}</Col>
-                        </Row>
-                    }
-                />
-                <Switch>
-                    <Redirect exact from="/" to="/gestionpagosprevencion" />
-                    <Route exact path="/gestionpagosprevencion" component={FormRadicacion} />
-                    <Route path="/gestionpagosprevencion/bandeja" component={ResultsDashboard} />
-                    <Route path="/gestionpagosprevencion/status" component={Status} />
-                </Switch>
+                <div style={styles.contentDashboard}>
+                    <Row style={{ border: "1px solid #000", width: "100%", margin: 0, boxSizing: "border-box" }}>
+                        <Col style={{ border: "1px solid #000", width: 60, boxSizing: "border-box" }}>a</Col>
+                        <Col xs style={{ border: "1px solid #000", boxSizing: "border-box", padding: 5 }}>
+                            <Switch>
+                                <Redirect exact from="/" to="/gestionpagosprevencion" />
+                                <Route exact path="/gestionpagosprevencion" component={FormRadicacion} />
+                                <Route path="/gestionpagosprevencion/bandeja" component={Bill} />
+                                <Route path="/gestionpagosprevencion/status" component={Status} />
+                            </Switch>
+                        </Col>
+                    </Row>
+                </div>
             </div>
         );
     }
 }
-
-MenuBar.propTypes = {
-    title: PropTypes.string.isRequired,
-};
 
 export default MenuBar;

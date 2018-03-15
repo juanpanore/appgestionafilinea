@@ -14,14 +14,14 @@ import MenuItem from "material-ui/MenuItem";
 import Paper from "material-ui/Paper";
 import RaisedButton from "material-ui/RaisedButton";
 import Divider from "material-ui/Divider";
-import { checkNotNull, checkArgument } from "../../../functions/validations";
+import { checkNotNull, checkArgument } from "../../functions/validations";
 import {
     searchProviderData as spd,
     sendBillData as sbd,
     cleanData as cd,
     cleanBillData as cbd,
     searchDocTypes as sdt,
-    SEND_BILL_DATA_FULFILLED
+    SEND_BILL_DATA_FULFILLED,
 } from "./ducks";
 
 const paperStyle = {
@@ -29,11 +29,11 @@ const paperStyle = {
     textAlign: "left",
     flex: 50,
     padding: 20,
-    color: "rgb(0,51,160)"
+    color: "rgb(0,51,160)",
 };
 
 const dividerStyle = {
-    thickness: 40
+    thickness: 40,
 };
 
 class FormRadicacion extends Component {
@@ -48,7 +48,7 @@ class FormRadicacion extends Component {
         statusBill: string.isRequired,
         docTypes: PropTypes.shape({
             key: PropTypes.string,
-            value: PropTypes.string
+            value: PropTypes.string,
         }),
         resetForm: func.isRequired,
         values: PropTypes.shape({
@@ -62,7 +62,7 @@ class FormRadicacion extends Component {
             lastSettlement: PropTypes.string,
             billDate: PropTypes.instanceOf(Date),
             billArrivalDate: PropTypes.instanceOf(Date),
-            idRadicado: PropTypes.number
+            idRadicado: PropTypes.number,
         }),
         errors: PropTypes.shape({
             dniProvider: PropTypes.string,
@@ -72,12 +72,12 @@ class FormRadicacion extends Component {
             billNumber: PropTypes.string,
             billValue: PropTypes.string,
             billDate: PropTypes.string,
-            billArrivalDate: PropTypes.string
+            billArrivalDate: PropTypes.string,
         }),
         handleChange: PropTypes.func,
         handleSubmit: PropTypes.func,
         setFieldValue: PropTypes.func.isRequired,
-        touched: PropTypes.shape().isRequired
+        touched: PropTypes.shape().isRequired,
     };
 
     static defaultProps = {
@@ -85,7 +85,7 @@ class FormRadicacion extends Component {
         docTypes: [],
         errors: [],
         handleChange: () => {},
-        handleSubmit: () => {}
+        handleSubmit: () => {},
     };
 
     componentDidMount() {
@@ -132,7 +132,7 @@ class FormRadicacion extends Component {
             setFieldValue,
             searchProviderData,
             loadingProvider,
-            sendingBill
+            sendingBill,
         } = this.props;
         return (
             <form onSubmit={handleSubmit}>
@@ -154,7 +154,7 @@ class FormRadicacion extends Component {
                                     fullWidth
                                     dropDownMenuProps={{
                                         anchorOrigin: { vertical: "top", horizontal: "left" },
-                                        targetOrigin: { vertical: "top", horizontal: "left" }
+                                        targetOrigin: { vertical: "top", horizontal: "left" },
                                     }}
                                 >
                                     {docTypes.map(doc => (
@@ -335,7 +335,7 @@ const validateRequired = values => {
         billNumber: checkNotNull(values.billNumber, "Se requiere el número de factura."),
         billValue:
             checkNotNull(values.billValue, "Se requiere el valor de la factura.") ||
-            checkArgument(values.billValue <= 0, "El valor de la factura debe ser mayor a cero.")
+            checkArgument(values.billValue <= 0, "El valor de la factura debe ser mayor a cero."),
     };
     return _.omitBy(errors, _.isNil);
 };
@@ -371,7 +371,7 @@ const formikComponent = withFormik({
         micrositio: "",
         billNumber: "",
         billValue: 0,
-        billDate: "00/00/0000"
+        billDate: "00/00/0000",
     }),
     validate,
     handleSubmit: (values, { props }) => {
@@ -384,9 +384,9 @@ const formikComponent = withFormik({
         props.sendBillData(
             valuesToSend.dniType + valuesToSend.dniProvider,
             _.get(props, "provider.dniDelegation"),
-            valuesToSend
+            valuesToSend,
         );
-    }
+    },
 });
 
 function mapStateToProps({ settlement }) {
@@ -397,7 +397,7 @@ function mapStateToProps({ settlement }) {
         statusBill: settlement.get("statusBill"),
         docTypes: settlement.get("docTypes"),
         loadingDocTypes: settlement.get("loadingDocTypes"),
-        statusDocType: settlement.get("statusDocType")
+        statusDocType: settlement.get("statusDocType"),
     };
 }
 
@@ -408,9 +408,9 @@ function mapDispatchToProps(dispatch) {
             searchDocTypes: sdt,
             cleanData: cd,
             sendBillData: sbd,
-            cleanBillData: cbd
+            cleanBillData: cbd,
         },
-        dispatch
+        dispatch,
     );
 }
 

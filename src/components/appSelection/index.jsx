@@ -10,39 +10,39 @@ import { white } from "material-ui/styles/colors";
 import { changeApp as ca } from "./ducks";
 
 const AppSelector = props => {
-  const { application, changeApp } = props;
-  return (
-    <IconMenu
-      iconButtonElement={
-        <IconButton>
-          <AppIcon color={white} />
-        </IconButton>
-      }
-      onItemClick={(e, item) => changeApp(item)}
-    >
-      <MenuItem value="prevention" primaryText="Prevención" disabled={application === "prevention"} />
-    </IconMenu>
-  );
+    const { application, changeApp } = props;
+    return (
+        <IconMenu
+            iconButtonElement={
+                <IconButton>
+                    <AppIcon color={white} />
+                </IconButton>
+            }
+            onItemClick={(e, item) => changeApp(item)}
+        >
+            <MenuItem value="prevention" primaryText="Prevención" disabled={application === "prevention"} />
+        </IconMenu>
+    );
 };
 
 AppSelector.propTypes = {
-  application: string.isRequired,
-  changeApp: func.isRequired
+    application: string.isRequired,
+    changeApp: func.isRequired,
 };
 
 function mapStateToProps({ appSelector }) {
-  return {
-    application: appSelector.get("application")
-  };
+    return {
+        application: appSelector.get("application"),
+    };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      changeApp: ca
-    },
-    dispatch
-  );
+    return bindActionCreators(
+        {
+            changeApp: ca,
+        },
+        dispatch,
+    );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppSelector);
