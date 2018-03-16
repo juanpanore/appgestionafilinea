@@ -17,7 +17,7 @@ const conf = merge(common, {
 	mode: "production",
 	entry: path.resolve(__dirname, "./src/index.jsx"),
 	output: {
-		path: path.resolve(__dirname, "dist/gestionpagosprevencion"),
+		path: path.resolve(__dirname, "dist"),
 		filename: '[name]-[chunkhash].js',
 		chunkFilename: '[name]-[chunkhash].js',
 		publicPath: ''
@@ -27,7 +27,7 @@ const conf = merge(common, {
 		new webpack.DefinePlugin({
 			"process.env.NODE_ENV": JSON.stringify("production")
 		}),
-		new CleanWebpackPlugin(["dist/gestionpagosprevencion"]),
+		new CleanWebpackPlugin(["dist"]),
 		new UglifyJSPlugin({
 			sourceMap: true,
 			parallel: true
