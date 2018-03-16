@@ -1,63 +1,121 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Row, Col } from "react-flexbox-grid";
-import AppBar from "material-ui/AppBar";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import assign from "lodash/assign";
 import { Route, Redirect, Switch } from "react-router-dom";
-import Bill from "../../containers/billList";
+import { grey300 } from "material-ui/styles/colors";
+import Header from "../header";
+import MenuLeft from "../menuLeft";
+import BillList from "../../containers/billList";
 import FormRadicacion from "../../containers/radication";
 import Status from "../../containers/status";
-import logo from "../../images/Logosura.png";
 
 const styles = {
-    contentDashboard: {
-        display: "block",
+    content: {
+        padding: 0,
+        margin: 0,
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        display: "table",
+    },
+    contentRoute: {
+        padding: 0,
+        margin: 0,
+        width: "100%",
+        height: "100%",
+        display: "table",
+    },
+    contentBody: {
         boxSizing: "border-box",
         margin: 0,
+        width: "100%",
+        padding: 0,
+        display: "table-row",
+        height: "100%",
     },
+    contentCol: {
+        boxSizing: "border-box",
+        margin: 0,
+        padding: 0,
+        display: "table-cell",
+    },
+    contentRouteRow: {
+        display: "table-row",
+        width: "100%",
+        margin: 0,
+        boxSizing: "border-box",
+    },
+    contentRouteColMenu: {
+        display: "table-cell",
+        boxSizing: "border-box",
+        height: "100%",
+        verticalAlign: "top",
+        borderRight: `1px solid ${grey300}`,
+    },
+    contentRouteCol: {
+        display: "table-cell",
+        boxSizing: "border-box",
+        height: "100%",
+        overflowX: "hidden",
+        overflowY: "auto",
+        verticalAlign: "top",
+        padding: 0,
+        margin: 0,
+    },
+    route: { width: "100%", height: "100%", overflowX: "hidden", overflowY: "auto" },
 };
 
-class MenuBar extends Component {
+class MenuBar extends PureComponent {
     static propTypes = {
         title: PropTypes.string.isRequired,
+        sizeMenu: PropTypes.number,
     };
 
-    state = {};
+    static defaultProps = {
+        sizeMenu: 270,
+    };
 
     render() {
-        const { title } = this.props;
+        const { title, sizeMenu } = this.props;
         return (
-            <div>
-                <div style={styles.contentDashboard}>
-                    <div style={{ width: "100%" }}>
-                        <img src={logo} alt="Sura" width="140dp" height="60dp" />
-                    </div>
-                    <AppBar
-                        title={title}
-                        onLeftIconButtonClick={this.handleToggle}
-                        iconElementRight={
-                            <Row>
-                                <Col xs={9}>{/* <SearchPreventionBill /> */}</Col>
-                                <Col xs={3}>{/* <AppSelector /> */}</Col>
+            <div style={styles.content}>
+                <Header title={title} />
+                <Row style={styles.contentBody}>
+                    <Col xs style={styles.contentCol}>
+                        <div style={styles.contentRoute}>
+                            <Row style={styles.contentRouteRow}>
+                                <Col style={assign(styles.contentRouteColMenu, { width: sizeMenu })}>
+                                    <div style={styles.route}>
+                                        <MenuLeft />
+                                    </div>
+                                </Col>
+                                <Col xs style={styles.contentRouteCol}>
+                                    <div style={styles.route}>
+                                        <Switch>
+                                            <Redirect exact from="/" to="/gestionpagosprevencion" />
+                                            <Route path="/gestionpagosprevencion/bandeja" component={BillList} />
+                                            <Route path="/gestionpagosprevencion/status" component={Status} />
+                                            <Route exact path="/gestionpagosprevencion" component={FormRadicacion} />
+                                        </Switch>
+                                    </div>
+                                </Col>
                             </Row>
-                        }
-                    />
-                </div>
-                <div style={styles.contentDashboard}>
-                    <Row style={{ border: "0px solid #000", width: "100%", margin: 0, boxSizing: "border-box" }}>
-                        <Col style={{ border: "0px solid #000", width: 60, boxSizing: "border-box" }}>a</Col>
-                        <Col xs style={{ border: "0px solid #000", boxSizing: "border-box", padding: 5 }}>
-                            <Switch>
-                                <Redirect exact from="/" to="/gestionpagosprevencion" />
-                                <Route exact path="/gestionpagosprevencion" component={FormRadicacion} />
-                                <Route path="/gestionpagosprevencion/bandeja" component={Bill} />
-                                <Route path="/gestionpagosprevencion/status" component={Status} />
-                            </Switch>
-                        </Col>
-                    </Row>
-                </div>
+                        </div>
+                    </Col>
+                </Row>
             </div>
         );
     }
 }
 
-export default MenuBar;
+function mapStateToProps({ menuLeft }) {
+    return {
+        sizeMenu: menuLeft.get("sizeMenu"),
+    };
+}
+
+export default connect(mapStateToProps)(MenuBar);

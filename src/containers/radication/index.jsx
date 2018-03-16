@@ -136,7 +136,7 @@ class FormRadicacion extends Component {
         } = this.props;
         return (
             <form onSubmit={handleSubmit}>
-                <Grid>
+                <Grid fluid>
                     <Paper style={paperStyle} zDepth={2}>
                         <Row>
                             <Col>

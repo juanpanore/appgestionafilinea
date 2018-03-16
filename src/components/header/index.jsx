@@ -1,83 +1,71 @@
 import React, { Component } from "react";
 import { Row, Col } from "react-flexbox-grid";
-import { Link } from "react-router-dom";
 import AppBar from "material-ui/AppBar";
-import Drawer from "material-ui/Drawer";
-import MenuItem from "material-ui/MenuItem";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { showMenu as sm } from "../menuLeft/ducks";
 import logo from "../../images/Logosura.png";
 /* import AppSelector from "../appSelection"; */
 /* import SearchPreventionBill from "../prevention/searchPrevention"; */
 
+const styles = {
+    contentRowHead: {
+        boxSizing: "border-box",
+        margin: 0,
+        width: "100%",
+        padding: 0,
+        display: "table-row",
+        border: "1px solid #000",
+    },
+    contentCol: {
+        boxSizing: "border-box",
+        margin: 0,
+        padding: 0,
+        display: "table-cell",
+    },
+    contentImage: {
+        width: "100%",
+    },
+};
+
 class Header extends Component {
-    state = {
-        open: false,
-        data: []
+    static propTypes = {
+        title: PropTypes.string.isRequired,
+        showMenu: PropTypes.func.isRequired,
     };
 
-    componentDidMount() {
-        /* axios.get(`http://192.168.2.200:8080/api/v1/cars`).then(response => {
-      this.setState({ data: response.data });
-    }); */
-    }
-
-    handleToggle = () => this.setState({ open: !this.state.open });
-    handleClose = () => this.setState({ open: false });
+    handleToggle = () => {
+        const { showMenu } = this.props;
+        showMenu();
+    };
 
     render() {
-        console.log(this.state.data);
+        const { title } = this.props;
         return (
-            <div>
-                <div>
-                    <img src={logo} alt="Sura" width="140dp" height="60dp" />
-                </div>
-                <AppBar
-                    title={this.props.title}
-                    onLeftIconButtonClick={this.handleToggle}
-                    iconElementRight={
-                        <Row>
-                            <Col xs={9}>{/* <SearchPreventionBill /> */}</Col>
-                            <Col xs={3}>{/* <AppSelector /> */}</Col>
-                        </Row>
-                    }
-                />
-                <Drawer open={this.state.open} onRequestChange={open => this.setState({ open })}>
-                    <MenuItem onClick={this.handleClose} />
-                    <MenuItem onClick={this.handleClose}>
-                        <Link href="/" to="/">
-                            Inicio
-                        </Link>
-                    </MenuItem>
-                    <MenuItem onClick={this.handleClose}>
-                        <Link href="/facturasPendientes" to="/facturasPendientes">
-                            Facturas Pendientes
-                        </Link>
-                    </MenuItem>
-                    <MenuItem onClick={this.handleClose}>
-                        <Link href="/facturasAuditadas" to="/facturasAuditadas">
-                            Facturas Auditadas
-                        </Link>
-                    </MenuItem>
-                    <MenuItem onClick={this.handleClose}>
-                        <Link href="/facturasPagadas" to="/facturasPagadas">
-                            Facturas Pagadas
-                        </Link>
-                    </MenuItem>
-                    <MenuItem onClick={this.handleClose}>
-                        <Link href="/facturasDevueltas" to="/facturasDevueltas">
-                            Facturas Devueltas
-                        </Link>
-                    </MenuItem>
-                </Drawer>
-                {/* <p>Respuesta de servicio: </p>
-                {JSON.stringify(this.state.data, null, 2)} */}
-            </div>
+            <Row style={styles.contentRowHead}>
+                <Col xs style={styles.contentCol}>
+                    <div style={styles.contentImage}>
+                        <img src={logo} alt="Sura" width="140dp" height="60dp" />
+                    </div>
+                    <AppBar
+                        title={title}
+                        onLeftIconButtonClick={this.handleToggle}
+                        iconElementRight={
+                            <Row>
+                                <Col xs={9}>{/* <SearchPreventionBill /> */}</Col>
+                                <Col xs={3}>{/* <AppSelector /> */}</Col>
+                            </Row>
+                        }
+                    />
+                </Col>
+            </Row>
         );
     }
 }
 
-Header.propTypes = {
-    title: PropTypes.string.isRequired
-};
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ showMenu: sm }, dispatch);
+}
 
-export default Header;
+export default connect(null, mapDispatchToProps)(Header);

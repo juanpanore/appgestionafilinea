@@ -178,7 +178,7 @@ export const searchProviderEpic$ = action$ =>
             .concatMap(resultAction => Observable.of(resultAction))
             .catch(error => {
                 const { response } = error;
-                if (_.isEqual(response.status, 404)) {
+                if (_.isEqual(_.get(response, "status"), 404)) {
                     return Observable.of(
                         {
                             type: SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA,
