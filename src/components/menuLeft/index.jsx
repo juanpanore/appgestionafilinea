@@ -58,21 +58,17 @@ class MenuLeft extends PureComponent {
                                 <List style={{ padding: 0, margin: 0 }}>
                                     <ListItem
                                         primaryText="Home"
-                                        containerElement={<Link href to="/gestionpagosprevencion" refresh="true" />}
+                                        containerElement={<Link href to="/" refresh="true" />}
                                         rightIcon={<HomeIcon />}
                                     />
                                     <ListItem
                                         primaryText="Estado"
-                                        containerElement={
-                                            <Link href to="/gestionpagosprevencion/status" refresh="true" />
-                                        }
+                                        containerElement={<Link href to="/status" refresh="true" />}
                                         rightIcon={<StatusIcon />}
                                     />
                                     <ListItem
                                         primaryText="Bandeja"
-                                        containerElement={
-                                            <Link href to="/gestionpagosprevencion/bandeja" refresh="true" />
-                                        }
+                                        containerElement={<Link href to="/bandeja" refresh="true" />}
                                         rightIcon={<DashboardIcon />}
                                     />
                                 </List>
