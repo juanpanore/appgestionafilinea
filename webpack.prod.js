@@ -17,7 +17,7 @@ const conf = merge(common, {
 	mode: "production",
 	entry: path.resolve(__dirname, "./src/index.jsx"),
 	output: {
-		path: path.resolve(__dirname, "dist"),
+		path: path.resolve(__dirname, "dist","gestionpagosprevencion"),
 		filename: '[name]-[chunkhash].js',
 		chunkFilename: '[name]-[chunkhash].js',
 		publicPath: ''
