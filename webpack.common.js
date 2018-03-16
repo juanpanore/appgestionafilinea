@@ -17,6 +17,7 @@ const config = {
         colors: true,
         reasons: true,
         chunks: true,
+		    children: false,
     },
 
     module: {
@@ -48,6 +49,10 @@ const config = {
                 loader: "style-loader!css-loader",
                 include: /flexboxgrid/,
             },
+      			{
+      				test: /\.html$/,
+      				loader: 'html-loader'
+      			},
         ],
     },
 };

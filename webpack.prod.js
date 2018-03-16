@@ -9,27 +9,34 @@ const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 // eslint-disable-next-line
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+// eslint-disable-next-line
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const common = require("./webpack.common");
 
-module.exports = merge(common, {
-    mode: "production",
-    entry: [path.resolve(__dirname, "./src/index.jsx")],
-    devtool: false,
-    plugins: [
-        new CleanWebpackPlugin(["dist/gestionpagosprevencion"]),
-        new UglifyJSPlugin(),
-        new webpack.DefinePlugin({
-            "process.env.NODE_ENV": JSON.stringify("production")
-        }),
-        new CopyWebpackPlugin([
-            {
-                from: path.resolve(__dirname, "static", "index.html"),
-                to: path.resolve(__dirname, "dist/gestionpagosprevencion", "index.html"),
-                toType: "file"
-            }
-        ])
-        /* new HtmlWebpackPlugin({
-        inject: true
-      }) */
-    ]
+const conf = merge(common, {
+	mode: "production",
+	entry: path.resolve(__dirname, "./src/index.jsx"),
+	output: {
+		path: path.resolve(__dirname, "dist/gestionpagosprevencion"),
+		filename: '[name]-[chunkhash].js',
+		chunkFilename: '[name]-[chunkhash].js',
+		publicPath: ''
+	},
+	devtool: "source-map",
+	plugins: [
+		new webpack.DefinePlugin({
+			"process.env.NODE_ENV": JSON.stringify("production")
+		}),
+		new CleanWebpackPlugin(["dist/gestionpagosprevencion"]),
+		new UglifyJSPlugin({
+			sourceMap: true,
+			parallel: true
+		}),
+		new HtmlWebpackPlugin({
+			title: 'Prevención ARL',
+      inject: 'body',
+      template: 'static/indexProduction.html',
+		})
+	]
 });
+module.exports = conf;
