@@ -4,10 +4,6 @@ const merge = require("webpack-merge");
 const webpack = require("webpack");
 const path = require("path");
 const common = require("./webpack.common.js");
-// eslint-disable-next-line
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-// eslint-disable-next-line
-const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 const serverPort = 3000;
 
@@ -31,14 +27,5 @@ module.exports = merge(common, {
     port: serverPort,
     hot: true
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, "static", "index.html"),
-        to: path.resolve(__dirname, "dist", "index.html"),
-        toType: "file"
-      }
-    ])
-  ]
+  plugins: [new webpack.HotModuleReplacementPlugin()]
 });
