@@ -51,6 +51,7 @@ class Header extends Component {
                     <AppBar
                         title={title}
                         onLeftIconButtonClick={this.handleToggle}
+                        showMenuIconButton={false}
                         iconElementRight={
                             <Row>
                                 <Col xs={9}>{/* <SearchPreventionBill /> */}</Col>

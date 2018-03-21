@@ -3,13 +3,15 @@ import { Row, Col } from "react-flexbox-grid";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import assign from "lodash/assign";
-import { Route,  Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { grey300 } from "material-ui/styles/colors";
+import Transition from "react-transition-group/Transition";
 import Header from "../header";
 import MenuLeft from "../menuLeft";
 import BillList from "../../containers/billList";
 import FormRadicacion from "../../containers/radication";
 import Status from "../../containers/status";
+import { menuSmall, menuNormal, durationMenu } from "../menuLeft/types";
 
 const styles = {
     content: {
@@ -55,6 +57,8 @@ const styles = {
         height: "100%",
         verticalAlign: "top",
         borderRight: `1px solid ${grey300}`,
+        width: menuSmall,
+        transition: `width ${durationMenu}ms linear`,
     },
     contentRouteCol: {
         display: "table-cell",
@@ -66,21 +70,54 @@ const styles = {
         padding: 0,
         margin: 0,
     },
+    routeMenu: {
+        height: "100%",
+        overflowX: "hidden",
+        overflowY: "auto",
+        width: menuSmall,
+        transition: `width ${durationMenu}ms linear`,
+    },
     route: { width: "100%", height: "100%", overflowX: "hidden", overflowY: "auto" },
+};
+
+function getStyleTransition(state) {
+    switch (state) {
+        case "entering":
+            return { width: menuSmall };
+        case "entered":
+            return { width: menuNormal };
+        default:
+            return {};
+    }
+}
+
+const ContentMenu = ({ in: inProp }) => (
+    <Transition in={inProp} timeout={durationMenu}>
+        {state => {
+            const styleTransition = getStyleTransition(state);
+            return (
+                <Col style={assign({}, styles.contentRouteColMenu, styleTransition)}>
+                    <div style={assign({}, styles.routeMenu, styleTransition)}>
+                        <MenuLeft />
+                    </div>
+                </Col>
+            );
+        }}
+    </Transition>
+);
+
+ContentMenu.propTypes = {
+    in: PropTypes.bool.isRequired,
 };
 
 class MenuBar extends PureComponent {
     static propTypes = {
         title: PropTypes.string.isRequired,
-        sizeMenu: PropTypes.number,
-    };
-
-    static defaultProps = {
-        sizeMenu: 270,
+        openMenu: PropTypes.bool.isRequired,
     };
 
     render() {
-        const { title, sizeMenu } = this.props;
+        const { title, openMenu } = this.props;
         return (
             <div style={styles.content}>
                 <Header title={title} />
@@ -88,11 +125,7 @@ class MenuBar extends PureComponent {
                     <Col xs style={styles.contentCol}>
                         <div style={styles.contentRoute}>
                             <Row style={styles.contentRouteRow}>
-                                <Col style={assign(styles.contentRouteColMenu, { width: sizeMenu })}>
-                                    <div style={styles.route}>
-                                        <MenuLeft />
-                                    </div>
-                                </Col>
+                                <ContentMenu in={openMenu} />
                                 <Col xs style={styles.contentRouteCol}>
                                     <div style={styles.route}>
                                         <Switch>
@@ -113,7 +146,7 @@ class MenuBar extends PureComponent {
 
 function mapStateToProps({ menuLeft }) {
     return {
-        sizeMenu: menuLeft.get("sizeMenu"),
+        openMenu: menuLeft.get("openMenu"),
     };
 }
 

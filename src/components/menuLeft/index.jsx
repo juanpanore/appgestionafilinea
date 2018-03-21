@@ -4,86 +4,72 @@ import StatusIcon from "material-ui/svg-icons/action/done";
 import HomeIcon from "material-ui/svg-icons/action/home";
 import DashboardIcon from "material-ui/svg-icons/action/dashboard";
 import { connect } from "react-redux";
-import { List, ListItem } from "material-ui/List";
-import { Link } from "react-router-dom";
-import assing from "lodash/assign";
-import get from "lodash/get";
-import { Transition } from "react-transition-group";
-// import { sizes, menuNormal } from "./types";
-
-const duration = 400;
+import { List } from "material-ui/List";
+import _ from "lodash";
+import Transition from "react-transition-group/Transition";
+import Item from "./item";
+import { menuSmall, menuNormal, durationMenu } from "./types";
 
 const styles = {
     menu: {
-        width: "100%",
+        transition: `width ${durationMenu}ms linear`,
+        width: menuSmall,
         padding: 0,
         margin: 0,
     },
-    items: {
-        transition: `transform ${duration}ms ease-in-out`,
-        // position: "absolute",
-        transform: "translateX(-100%)",
-    },
 };
 
-const transitionStyles = {
-    entering: {
-        transform: "translateX(-100%)",
-    },
-    entered: {
-        transform: "translateX(0%)",
-    },
+function getStyleTransition(state) {
+    switch (state) {
+        case "entering":
+            return { width: menuSmall };
+        case "entered":
+            return { width: menuNormal };
+        default:
+            return {};
+    }
+}
+
+const Options = ({ in: inProp }) => (
+    <Transition in={inProp} timeout={durationMenu}>
+        {state => {
+            const styleTransition = getStyleTransition(state);
+            const isTransition = _.indexOf(["exited", "entered"], state) !== -1;
+            return (
+                <div style={_.assign({}, styles.menu, styleTransition)}>
+                    <List style={{ padding: 0, margin: 0 /* , width: inProp ? "94%" : "82%" */ }}>
+                        <Item title="Home" icon={<HomeIcon />} url="/" showTitle={inProp && isTransition} />
+                        <Item title="Estado" icon={<StatusIcon />} url="/status" showTitle={inProp && isTransition} />
+                        <Item
+                            title="Bandeja"
+                            icon={<DashboardIcon />}
+                            url="/bandeja"
+                            showTitle={inProp && isTransition}
+                        />
+                    </List>
+                </div>
+            );
+        }}
+    </Transition>
+);
+
+Options.propTypes = {
+    in: PropTypes.bool.isRequired,
 };
 
 class MenuLeft extends PureComponent {
     static propTypes = {
-        // sizeMenu: PropTypes.oneOf(sizes),
-        open: PropTypes.bool,
-    };
-
-    static defaultProps = {
-        // sizeMenu: menuNormal,
-        open: true,
+        open: PropTypes.bool.isRequired,
     };
 
     render() {
         const { open } = this.props;
-        return (
-            <div style={styles.menu}>
-                <Transition in={open} timeout={duration}>
-                    {state => {
-                        const styleTransition = assing(styles.items, get(transitionStyles, state, {}));
-                        return (
-                            <div style={styleTransition}>
-                                <List style={{ padding: 0, margin: 0 }}>
-                                    <ListItem
-                                        primaryText="Home"
-                                        containerElement={<Link href to="/" refresh="true" />}
-                                        rightIcon={<HomeIcon />}
-                                    />
-                                    <ListItem
-                                        primaryText="Estado"
-                                        containerElement={<Link href to="/status" refresh="true" />}
-                                        rightIcon={<StatusIcon />}
-                                    />
-                                    <ListItem
-                                        primaryText="Bandeja"
-                                        containerElement={<Link href to="/bandeja" refresh="true" />}
-                                        rightIcon={<DashboardIcon />}
-                                    />
-                                </List>
-                            </div>
-                        );
-                    }}
-                </Transition>
-            </div>
-        );
+        return <Options in={open} />;
     }
 }
 
 function mapStateToProps({ menuLeft }) {
     return {
-        sizeMenu: menuLeft.get("sizeMenu"),
         open: menuLeft.get("openMenu"),
     };
 }
