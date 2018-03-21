@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { showMenu as sm } from "../menuLeft/ducks";
-import logo from "../../images/Logosura.png";
+import images from "../../images/images-base-64.json";
 /* import AppSelector from "../appSelection"; */
 /* import SearchPreventionBill from "../prevention/searchPrevention"; */
 
@@ -46,7 +46,7 @@ class Header extends Component {
             <Row style={styles.contentRowHead}>
                 <Col xs style={styles.contentCol}>
                     <div style={styles.contentImage}>
-                        <img src={logo} alt="Sura" width="140dp" height="60dp" />
+                        <img src={images.logo} alt="Sura" width="140dp" height="60dp" />
                     </div>
                     <AppBar
                         title={title}
