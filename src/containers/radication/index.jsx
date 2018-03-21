@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes, { func, bool, string, shape } from "prop-types";
-import { Grid, Row, Col } from "react-flexbox-grid";
+import { Row, Col } from "react-flexbox-grid";
 import moment from "moment";
 import { withFormik } from "formik";
 import _ from "lodash";
@@ -11,9 +11,9 @@ import TextField from "material-ui/TextField";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
 // import DatePicker from "material-ui/DatePicker";
-import Paper from "material-ui/Paper";
 import RaisedButton from "material-ui/RaisedButton";
 import Divider from "material-ui/Divider";
+import Content from "../../components/content";
 import { checkNotNull, checkArgument } from "../../functions/validations";
 import {
     searchProviderData as spd,
@@ -23,14 +23,6 @@ import {
     searchDocTypes as sdt,
     SEND_BILL_DATA_FULFILLED,
 } from "./ducks";
-
-const paperStyle = {
-    margin: 20,
-    textAlign: "left",
-    flex: 50,
-    padding: 20,
-    color: "rgb(0,51,160)",
-};
 
 const dividerStyle = {
     thickness: 40,
@@ -135,118 +127,117 @@ class FormRadicacion extends Component {
             sendingBill,
         } = this.props;
         return (
-            <form onSubmit={handleSubmit}>
-                <Grid fluid>
-                    <Paper style={paperStyle} zDepth={2}>
-                        <Row>
-                            <Col>
-                                <p>Información prestador</p>
-                            </Col>
-                        </Row>
-                        <Divider style={dividerStyle} />
-                        <Row>
-                            <Col xs={3}>
-                                <SelectField
-                                    floatingLabelText="Tipo identificación"
-                                    value={values.dniType}
-                                    onChange={(e, key, value) => setFieldValue("dniType", value)}
-                                    errorText={touched.key && errors.key}
-                                    fullWidth
-                                    dropDownMenuProps={{
-                                        anchorOrigin: { vertical: "top", horizontal: "left" },
-                                        targetOrigin: { vertical: "top", horizontal: "left" },
-                                    }}
-                                >
-                                    {docTypes.map(doc => (
-                                        <MenuItem
-                                            name="docTypeItem"
-                                            value={doc.key}
-                                            key={doc.key}
-                                            primaryText={doc.value}
-                                        />
-                                    ))}
-                                </SelectField>
-                            </Col>
-                            <Col xs={3}>
-                                <TextField
-                                    floatingLabelText="Número identificación"
-                                    name="dniProvider"
-                                    value={values.dniProvider}
-                                    onChange={handleChange}
-                                    onKeyPress={e => {
-                                        if (e.key === "Enter") {
-                                            searchProviderData(values.dniType, values.dniProvider);
-                                        }
-                                    }}
-                                    maxLength={20}
-                                    errorText={touched.dniProvider && errors.dniProvider}
-                                    fullWidth
-                                    disabled={loadingProvider}
-                                />
-                            </Col>
-                            <Col xs={6}>
-                                <TextField
-                                    floatingLabelText="Nombre empresa"
-                                    name="name"
-                                    value={values.name}
-                                    onChange={handleChange}
-                                    maxLength={50}
-                                    errorText={touched.name && errors.name}
-                                    fullWidth
-                                    disabled
-                                />
-                            </Col>
-                            <Col xs={1}>
-                                <TextField
-                                    floatingLabelText="Micrositio (Si/No)"
-                                    name="micrositio"
-                                    maxLength={2}
-                                    style={{ width: 130 }}
-                                    value={values.micrositio}
-                                    onChange={handleChange}
-                                    errorText={touched.micrositio && errors.micrositio}
-                                    fullWidth
-                                    disabled
-                                />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <p>Información de factura</p>
-                            </Col>
-                        </Row>
-                        <Divider style={dividerStyle} />
-                        <Row>
-                            <Col xs>
-                                <TextField
-                                    floatingLabelText="Número factura"
-                                    name="billNumber"
-                                    value={values.billNumber}
-                                    onChange={handleChange}
-                                    errorText={touched.billNumber && errors.billNumber}
-                                    disbled={checkNotNull(values.name)}
-                                />
-                            </Col>
-                            <Col xs>
-                                <TextField
-                                    floatingLabelText="Valor factura"
-                                    name="billValue"
-                                    value={values.billValue}
-                                    onChange={handleChange}
-                                    errorText={touched.billValue && errors.billValue}
-                                >
-                                    <CurrencyInput precision={3} separator="." delimiter="." unit="$" />
-                                </TextField>
-                            </Col>
-                            <Col xs>
-                                <TextField
-                                    floatingLabelText="Fecha factura (DD/MM/YYYY)"
-                                    name="billDate"
-                                    onChange={(e, value) => setFieldValue("billDate", value)}
-                                    errorText={touched.billDate && errors.billDate}
-                                    value={values.billDate}
-                                />
-                                {/* <DatePicker
+            <Content>
+                <Row>
+                    <Col>
+                        <p>Información prestador</p>
+                    </Col>
+                </Row>
+                <Divider style={dividerStyle} />
+                <form onSubmit={handleSubmit}>
+                    <Row>
+                        <Col xs={3}>
+                            <SelectField
+                                floatingLabelText="Tipo identificación"
+                                value={values.dniType}
+                                onChange={(e, key, value) => setFieldValue("dniType", value)}
+                                errorText={touched.key && errors.key}
+                                fullWidth
+                                dropDownMenuProps={{
+                                    anchorOrigin: { vertical: "top", horizontal: "left" },
+                                    targetOrigin: { vertical: "top", horizontal: "left" },
+                                }}
+                            >
+                                {docTypes.map(doc => (
+                                    <MenuItem
+                                        name="docTypeItem"
+                                        value={doc.key}
+                                        key={doc.key}
+                                        primaryText={doc.value}
+                                    />
+                                ))}
+                            </SelectField>
+                        </Col>
+                        <Col xs={3}>
+                            <TextField
+                                floatingLabelText="Número identificación"
+                                name="dniProvider"
+                                value={values.dniProvider}
+                                onChange={handleChange}
+                                onKeyPress={e => {
+                                    if (e.key === "Enter") {
+                                        searchProviderData(values.dniType, values.dniProvider);
+                                    }
+                                }}
+                                maxLength={20}
+                                errorText={touched.dniProvider && errors.dniProvider}
+                                fullWidth
+                                disabled={loadingProvider}
+                            />
+                        </Col>
+                        <Col xs={6}>
+                            <TextField
+                                floatingLabelText="Nombre empresa"
+                                name="name"
+                                value={values.name}
+                                onChange={handleChange}
+                                maxLength={50}
+                                errorText={touched.name && errors.name}
+                                fullWidth
+                                disabled
+                            />
+                        </Col>
+                        <Col xs={1}>
+                            <TextField
+                                floatingLabelText="Micrositio (Si/No)"
+                                name="micrositio"
+                                maxLength={2}
+                                style={{ width: 130 }}
+                                value={values.micrositio}
+                                onChange={handleChange}
+                                errorText={touched.micrositio && errors.micrositio}
+                                fullWidth
+                                disabled
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <p>Información de factura</p>
+                        </Col>
+                    </Row>
+                    <Divider style={dividerStyle} />
+                    <Row>
+                        <Col xs>
+                            <TextField
+                                floatingLabelText="Número factura"
+                                name="billNumber"
+                                value={values.billNumber}
+                                onChange={handleChange}
+                                errorText={touched.billNumber && errors.billNumber}
+                                disbled={checkNotNull(values.name)}
+                            />
+                        </Col>
+                        <Col xs>
+                            <TextField
+                                floatingLabelText="Valor factura"
+                                name="billValue"
+                                value={values.billValue}
+                                onChange={handleChange}
+                                errorText={touched.billValue && errors.billValue}
+                            >
+                                <CurrencyInput precision={3} separator="." delimiter="." unit="$" />
+                            </TextField>
+                        </Col>
+                        <Col xs>
+                            <TextField
+                                floatingLabelText="Fecha factura (DD/MM/YYYY)"
+                                name="billDate"
+                                onChange={(e, value) => setFieldValue("billDate", value)}
+                                errorText={touched.billDate && errors.billDate}
+                                value={values.billDate}
+                            />
+                            {/* <DatePicker
                                     floatingLabelText="Fecha factura (DD/MM/YYYY)"
                                     formatDate={date => moment(date).format("DD/MM/YYYY")}
                                     name="billDate"
@@ -256,16 +247,16 @@ class FormRadicacion extends Component {
                                     autoOk
                                     value={values.billDate}
                                 /> */}
-                            </Col>
-                            <Col xs>
-                                <TextField
-                                    floatingLabelText="Fecha llegada (DD/MM/YYYY)"
-                                    name="billArrivalDate"
-                                    onChange={(e, value) => setFieldValue("billArrivalDate", value)}
-                                    errorText={touched.billArrivalDate && errors.billArrivalDate}
-                                    value={values.billArrivalDate}
-                                />
-                                {/* <DatePicker
+                        </Col>
+                        <Col xs>
+                            <TextField
+                                floatingLabelText="Fecha llegada (DD/MM/YYYY)"
+                                name="billArrivalDate"
+                                onChange={(e, value) => setFieldValue("billArrivalDate", value)}
+                                errorText={touched.billArrivalDate && errors.billArrivalDate}
+                                value={values.billArrivalDate}
+                            />
+                            {/* <DatePicker
                                     floatingLabelText="Fecha llegada (DD/MM/YYYY)"
                                     formatDate={date => moment(date).format("DD/MM/YYYY")}
                                     name="billArrivalDate"
@@ -275,28 +266,27 @@ class FormRadicacion extends Component {
                                     autoOk
                                     value={values.billArrivalDate}
                                 /> */}
-                            </Col>
-                        </Row>
-                        <Row end="xs">
-                            <Col xs={3}>
-                                <RaisedButton label="Radicar" onClick={handleSubmit} disabled={sendingBill} />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={2}>
-                                <TextField
-                                    floatingLabelText="Último radicado"
-                                    onChange={handleChange}
-                                    name="idRadicado"
-                                    value={values.idRadicado}
-                                    fullWidth
-                                    disabled
-                                />
-                            </Col>
-                        </Row>
-                    </Paper>
-                </Grid>
-            </form>
+                        </Col>
+                    </Row>
+                    <Row end="xs">
+                        <Col xs={3}>
+                            <RaisedButton label="Radicar" onClick={handleSubmit} disabled={sendingBill} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={2}>
+                            <TextField
+                                floatingLabelText="Último radicado"
+                                onChange={handleChange}
+                                name="idRadicado"
+                                value={values.idRadicado}
+                                fullWidth
+                                disabled
+                            />
+                        </Col>
+                    </Row>
+                </form>
+            </Content>
         );
     }
 }

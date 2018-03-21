@@ -1,0 +1,15 @@
+.content-menu-app-dashboard::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-menu-app-dashboard::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+    -o-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.content-menu-app-dashboard::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
