@@ -3,7 +3,7 @@ import { Row, Col } from "react-flexbox-grid";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import assign from "lodash/assign";
-import { Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { grey300 } from "material-ui/styles/colors";
 import Transition from "react-transition-group/Transition";
 import Header from "../header";
@@ -128,11 +128,11 @@ class MenuBar extends PureComponent {
                                 <ContentMenu in={openMenu} />
                                 <Col xs style={styles.contentRouteCol}>
                                     <div style={styles.route}>
-                                        <Switch>
+
                                             <Route path="/bandeja" component={BillList} />
                                             <Route path="/status" component={Status} />
                                             <Route exact path="/" component={FormRadicacion} />
-                                        </Switch>
+
                                     </div>
                                 </Col>
                             </Row>

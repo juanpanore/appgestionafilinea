@@ -40,10 +40,12 @@ class FormRadicacion extends Component {
         loadingProvider: bool.isRequired,
         sendingBill: bool.isRequired,
         statusBill: string.isRequired,
-        docTypes: PropTypes.shape({
-            key: PropTypes.string,
-            value: PropTypes.string,
-        }),
+        docTypes: PropTypes.arrayOf(
+            PropTypes.shape({
+                key: PropTypes.string,
+                value: PropTypes.string,
+            })
+        ),
         resetForm: func.isRequired,
         values: PropTypes.shape({
             dniProvider: PropTypes.string,
@@ -90,11 +92,11 @@ class FormRadicacion extends Component {
     }
 
     componentDidUpdate() {
-        const { provider, setFieldValue, statusBill, values, docTypes } = this.props;
+    const { provider, setFieldValue, statusBill, values/* , docTypes */ } = this.props;
         const providerName = _.get(provider, "providerName", "");
         const microsite = _.get(provider, "micrositio", false) ? "Sí" : "No";
         const idRadicado = _.get(values, "id", 0);
-        const docTypeValue = _.get(docTypes, "value", "");
+        // const docTypeValue = _.get(docTypes, "value", "");
         if (!_.isEqual(providerName, _.get(values, 'name'))) {
             setFieldValue("name", providerName);
         }
@@ -107,13 +109,7 @@ class FormRadicacion extends Component {
             this.props.cleanData();
             this.props.cleanBillData();
         }
-        // console.clear();
-        console.log("docTypes: ", docTypes);
-        console.log("Tipo documento: ", docTypeValue);
-        console.log(values);
-        /* if (_.isEqual(statusDocType, SEARCH_DOC_TYPES_DATA_FULFILLED)) {
-            setFieldValue("docTypeItem", docTypes.value);
-        } */
+
     }
 
     onChangeValueDate = (field, value) => {
@@ -333,7 +329,7 @@ const formikComponent = withFormik({
     mapPropsToValues: () => ({
         dniProvider: "",
         dniType: "",
-        name: undefined,
+        name: "",
         micrositio: "",
         billNumber: "",
         billValue: 0,

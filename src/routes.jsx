@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 // import { hot } from "react-hot-loader";
 import { Provider } from "react-redux";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import Alert from "./components/alert";
@@ -44,9 +44,11 @@ const App = () => (
 	<Provider store={store}>
 		<MuiThemeProvider muiTheme={muiTheme}>
 			<Fragment>
-				<BrowserRouter basename="/gestionpagosprevencion">
+				<BrowserRouter>
 					<Fragment>
-						<Dashboard title="ARL" />
+						<Switch>
+							<Dashboard title="ARL" />
+						</Switch>
 					</Fragment>
 				</BrowserRouter>
 				<Alert />

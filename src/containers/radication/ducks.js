@@ -266,7 +266,6 @@ export const searchDocTypesEpic$ = action$ =>
                 }
                 return Observable.of(
                     httpError(SEARCH_DOC_TYPES_DATA_FAILED, error),
-                    showAlert("Error consultando los tipos de documento.", MESSAGES.ERROR),
                 );
             })
             .startWith({ type: SEARCH_DOC_TYPES__DATA_IN_PROGRESS });
