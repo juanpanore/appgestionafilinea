@@ -41,9 +41,9 @@ export default class DatePickerFormat extends Component {
         name: PropTypes.string.isRequired,
         floatingLabelText: PropTypes.string,
         errorText: PropTypes.string,
-        onChange: PropTypes.string.isRequired,
+        onChange: PropTypes.func.isRequired,
         value: PropTypes.string.isRequired,
-        width: PropTypes.string,
+        width: PropTypes.number,
         fullWidth: PropTypes.bool,
     };
 
@@ -145,6 +145,9 @@ export default class DatePickerFormat extends Component {
                                     onChange={this.onChangeValueText}
                                     onBlur={this.onBlurText}
                                     errorText={errorText}
+                                    multiLine={false}
+                                    rows={1}
+                                    rowsMax={1}
                                     fullWidth
                                 />
                             </td>

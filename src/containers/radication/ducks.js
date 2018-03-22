@@ -3,7 +3,8 @@ import { Observable } from "rxjs";
 import _ from "lodash";
 import axios from "../../api";
 import createReducer from "../../util/createReducer";
-import { toggleSnackbar } from "../../components/toast/ducks";
+import { showAlert } from "../../components/alert/ducks";
+import { MESSAGES } from "../../components/alert/types";
 
 const SEARCH_PROVIDER_DATA_REQUESTED = "payments/bills-settlement/SEARCH_PROVIDER_DATA_REQUESTED";
 const SEARCH_PROVIDER_DATA_IN_PROGRESS = "payments/bills-settlement/SEARCH_PROVIDER_DATA_IN_PROGRESS";
@@ -185,12 +186,12 @@ export const searchProviderEpic$ = action$ =>
                         {
                             type: SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA,
                         },
-                        toggleSnackbar("Proveedor no encontrado"),
+                        showAlert("Proveedor no encontrado", MESSAGES.INFO),
                     );
                 }
                 return Observable.of(
                     httpError(SEARCH_PROVIDER_DATA_FAILED, error),
-                    toggleSnackbar("Error consultando el proveedor"),
+                    showAlert("Error consultando el proveedor", MESSAGES.ERROR),
                 );
             })
             .startWith({ type: SEARCH_PROVIDER_DATA_IN_PROGRESS });
@@ -219,7 +220,7 @@ export const sendBillEpic$ = action$ =>
             .concatMap(resultAction =>
                 Observable.of(
                     resultAction,
-                    toggleSnackbar(`Radicación exitosa: ${_.get(resultAction, "payload.data.id")}`),
+                    showAlert(`Radicación exitosa: ${_.get(resultAction, "payload.data.id")}`, MESSAGES.SUCCESS),
                 ),
             )
             .catch(error => {
@@ -228,18 +229,18 @@ export const sendBillEpic$ = action$ =>
                 if (_.isEqual(statusResponse, 500)) {
                     return Observable.of(
                         httpError(SEND_BILL_DATA_FAILED, error),
-                        toggleSnackbar("Error en el servidor."),
+                        showAlert("Error en el servidor.", MESSAGES.ERROR),
                     );
                 }
                 if (_.isEqual(statusResponse, 400)) {
                     return Observable.of(
                         httpError(SEND_BILL_DATA_FAILED, error),
-                        toggleSnackbar("Error validando la factura."),
+                        showAlert("Error validando la factura.", MESSAGES.ERROR),
                     );
                 }
                 return Observable.of(
                     httpError(SEND_BILL_DATA_FAILED, error),
-                    toggleSnackbar("Ocurrió un error inesperado, por favor, intentelo de nuevo."),
+                    showAlert("Ocurrió un error inesperado, por favor, intentelo de nuevo.", MESSAGES.WARNING),
                 );
             })
             .startWith({ type: SEND_BILL_DATA_IN_PROGRESS });
@@ -255,17 +256,17 @@ export const searchDocTypesEpic$ = action$ =>
             .catch(error => {
                 const { response } = error;
                 const statusResponse = _.get(response, 'status');
-                if (_.isEqual(statusResponse, 404)) { 
+                if (_.isEqual(statusResponse, 404)) {
                     return Observable.of(
                         {
                             type: SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA,
                         },
-                        toggleSnackbar("No se econtraron datos."),
+                        showAlert("No se econtraron datos.", MESSAGES.INFO),
                     );
                 }
                 return Observable.of(
                     httpError(SEARCH_DOC_TYPES_DATA_FAILED, error),
-                    toggleSnackbar("Error consultando los tipos de documento."),
+                    showAlert("Error consultando los tipos de documento.", MESSAGES.ERROR),
                 );
             })
             .startWith({ type: SEARCH_DOC_TYPES__DATA_IN_PROGRESS });

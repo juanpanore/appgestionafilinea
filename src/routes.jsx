@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
-import Snackbar from "./components/toast";
+import Alert from "./components/alert";
 import Dashboard from "./components/dashboard";
 
 import createStore from "./store";
@@ -49,7 +49,7 @@ const App = () => (
 						<Dashboard title="ARL" />
 					</Fragment>
 				</BrowserRouter>
-				<Snackbar />
+				<Alert />
 			</Fragment>
 		</MuiThemeProvider>
 	</Provider>
