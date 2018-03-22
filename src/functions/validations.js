@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export function checkNotNull(value, msg) {
-    if (_.isNil(value)) {
+    if (_.isEmpty(value)) {
         return msg || "Not null";
     }
     return undefined;

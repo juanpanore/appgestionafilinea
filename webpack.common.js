@@ -18,7 +18,6 @@ const config = {
         reasons: true,
         chunks: true,
     },
-
     module: {
         rules: [
             {
@@ -34,7 +33,7 @@ const config = {
                 test: /.jsx?$/,
                 use: "babel-loader",
             },
-            /* {
+            {
                 test: /\.(png|jpg|gif)$/,
                 use: [
                     {
@@ -42,7 +41,7 @@ const config = {
                         options: {},
                     },
                 ],
-            }, */
+            },
             {
                 test: /\.css$/,
                 loader: "style-loader!css-loader",

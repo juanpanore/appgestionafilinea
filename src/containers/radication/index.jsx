@@ -10,7 +10,6 @@ import CurrencyInput from "react-currency-input";
 import TextField from "material-ui/TextField";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
-// import DatePicker from "material-ui/DatePicker";
 import RaisedButton from "material-ui/RaisedButton";
 import Divider from "material-ui/Divider";
 import Content from "../../components/content";
@@ -23,6 +22,9 @@ import {
     searchDocTypes as sdt,
     SEND_BILL_DATA_FULFILLED,
 } from "./ducks";
+import DatePickerFormat from "../../components/dateFormat";
+
+const dateformat = "DD/MM/YYYY";
 
 const dividerStyle = {
     thickness: 40,
@@ -52,8 +54,8 @@ class FormRadicacion extends Component {
             billNumber: PropTypes.string,
             billValue: PropTypes.number,
             lastSettlement: PropTypes.string,
-            billDate: PropTypes.instanceOf(Date),
-            billArrivalDate: PropTypes.instanceOf(Date),
+            billDate: PropTypes.string,
+            billArrivalDate: PropTypes.string,
             idRadicado: PropTypes.number,
         }),
         errors: PropTypes.shape({
@@ -81,9 +83,10 @@ class FormRadicacion extends Component {
     };
 
     componentDidMount() {
-        this.props.searchDocTypes();
-        this.props.cleanData();
-        this.props.cleanBillData();
+        const {searchDocTypes, cleanData, cleanBillData} = this.props;
+        searchDocTypes();
+        cleanData();
+        cleanBillData();
     }
 
     componentDidUpdate() {
@@ -92,7 +95,7 @@ class FormRadicacion extends Component {
         const microsite = _.get(provider, "micrositio", false) ? "Sí" : "No";
         const idRadicado = _.get(values, "id", 0);
         const docTypeValue = _.get(docTypes, "value", "");
-        if (providerName !== values.name) {
+        if (!_.isEqual(providerName, _.get(values, 'name'))) {
             setFieldValue("name", providerName);
         }
         if (microsite !== values.micrositio) {
@@ -104,14 +107,19 @@ class FormRadicacion extends Component {
             this.props.cleanData();
             this.props.cleanBillData();
         }
+        // console.clear();
         console.log("docTypes: ", docTypes);
         console.log("Tipo documento: ", docTypeValue);
-        console.clear();
         console.log(values);
         /* if (_.isEqual(statusDocType, SEARCH_DOC_TYPES_DATA_FULFILLED)) {
             setFieldValue("docTypeItem", docTypes.value);
         } */
     }
+
+    onChangeValueDate = (field, value) => {
+        const { setFieldValue } = this.props;
+        setFieldValue(field, value);
+    };
 
     render() {
         const {
@@ -141,7 +149,7 @@ class FormRadicacion extends Component {
                                 floatingLabelText="Tipo identificación"
                                 value={values.dniType}
                                 onChange={(e, key, value) => setFieldValue("dniType", value)}
-                                errorText={touched.key && errors.key}
+                                errorText={touched.dniType && errors.dniType}
                                 fullWidth
                                 dropDownMenuProps={{
                                     anchorOrigin: { vertical: "top", horizontal: "left" },
@@ -166,7 +174,7 @@ class FormRadicacion extends Component {
                                 onChange={handleChange}
                                 onKeyPress={e => {
                                     if (e.key === "Enter") {
-                                        searchProviderData(values.dniType, values.dniProvider);
+                                        searchProviderData(_.get(values, "dniType"), _.get(values, "dniProvider"));
                                     }
                                 }}
                                 maxLength={20}
@@ -230,42 +238,22 @@ class FormRadicacion extends Component {
                             </TextField>
                         </Col>
                         <Col xs>
-                            <TextField
+                            <DatePickerFormat
                                 floatingLabelText="Fecha factura (DD/MM/YYYY)"
                                 name="billDate"
-                                onChange={(e, value) => setFieldValue("billDate", value)}
+                                onChange={this.onChangeValueDate}
                                 errorText={touched.billDate && errors.billDate}
                                 value={values.billDate}
                             />
-                            {/* <DatePicker
-                                    floatingLabelText="Fecha factura (DD/MM/YYYY)"
-                                    formatDate={date => moment(date).format("DD/MM/YYYY")}
-                                    name="billDate"
-                                    onChange={(e, value) => setFieldValue("billDate", value)}
-                                    cancelLabel="Cancelar"
-                                    errorText={touched.billDate && errors.billDate}
-                                    autoOk
-                                    value={values.billDate}
-                                /> */}
                         </Col>
                         <Col xs>
-                            <TextField
+                            <DatePickerFormat
                                 floatingLabelText="Fecha llegada (DD/MM/YYYY)"
                                 name="billArrivalDate"
-                                onChange={(e, value) => setFieldValue("billArrivalDate", value)}
+                                onChange={this.onChangeValueDate}
                                 errorText={touched.billArrivalDate && errors.billArrivalDate}
                                 value={values.billArrivalDate}
                             />
-                            {/* <DatePicker
-                                    floatingLabelText="Fecha llegada (DD/MM/YYYY)"
-                                    formatDate={date => moment(date).format("DD/MM/YYYY")}
-                                    name="billArrivalDate"
-                                    onChange={(e, value) => setFieldValue("billArrivalDate", value)}
-                                    cancelLabel="Cancelar"
-                                    errorText={touched.billArrivalDate && errors.billArrivalDate}
-                                    autoOk
-                                    value={values.billArrivalDate}
-                                /> */}
                         </Col>
                     </Row>
                     <Row end="xs">
@@ -295,63 +283,51 @@ const validateDates = values => {
     const errors = {};
     const Oldyears = moment().subtract(5, "years");
     const oldYear = moment().subtract(1, "years");
-    if (!values.billDate) {
-        errors.billDate = "Se requiere la fecha de factura.";
+    const isValidBillDate = checkNotNull(_.get(values, "billDate"), "Se requiere la fecha de factura.");
+    const isValidBillArrivalDate = checkNotNull(_.get(values, "billArrivalDate"), "Se requiere la fecha de llegada de la factura.");
+    if (!_.isUndefined(isValidBillDate)) {
+        errors.billDate = isValidBillDate;
+    } else {
+        if (moment(values.billDate, dateformat).isAfter(moment(), "day")) {
+            errors.billDate = "La fecha es superior a la fecha actual.";
+        }
+        if (moment(values.billDate, dateformat).isBefore(Oldyears, "day")) {
+            errors.billDate = "La fecha no puede ser 5 años anterior a la fecha actual.";
+        }
     }
-    if (!values.billArrivalDate) {
-        errors.billArrivalDate = "Se requiere la fecha de llegada de la factura.";
-    }
-    if (moment(values.billDate).isAfter(new Date(), "day")) {
-        errors.billDate = "La fecha es superior a la fecha actual.";
-    }
-    if (moment(values.billDate).isBefore(Oldyears, "day")) {
-        errors.billDate = "La fecha no puede ser 5 años inferior a la fecha actual";
-    }
-    if (moment(values.billArrivalDate).isAfter(new Date(), "day")) {
-        errors.billArrivalDate = "La fecha es superior a la fecha actual.";
-    }
-    if (moment(values.billArrivalDate).isBefore(moment(values.billDate), "day")) {
-        errors.billArrivalDate = "Fecha inferior a la fecha de factura.";
-    }
-    if (moment(values.billArrivalDate).isBefore(oldYear, "day")) {
-        errors.billArrivalDate = "Fecha anterior a un año de la fecha actual.";
+
+    if (!_.isUndefined(isValidBillArrivalDate)) {
+        errors.billArrivalDate = isValidBillArrivalDate;
+    } else {
+        if (moment(values.billArrivalDate, dateformat).isAfter(moment(), "day")) {
+            errors.billArrivalDate = "La fecha es superior a la fecha actual.";
+        }
+        if(_.isUndefined(isValidBillDate)){
+            if (moment(values.billArrivalDate, dateformat).isBefore(moment(values.billDate, dateformat), "day")) {
+                errors.billArrivalDate = "Fecha inferior a la fecha de factura.";
+            }
+        }
+        if (moment(values.billArrivalDate, dateformat).isBefore(oldYear, "day")) {
+            errors.billArrivalDate = "Fecha anterior a un año de la fecha actual.";
+        }
     }
     return errors;
 };
+
 const validateRequired = values => {
     const errors = {
-        dniProvider: checkNotNull(values.dniProvider, "Se requiere DNI del proveedor."),
-        name: checkNotNull(values.name, "Se requiere el nombre del proveedor."),
-        billNumber: checkNotNull(values.billNumber, "Se requiere el número de factura."),
+        dniType: checkNotNull(_.get(values, 'dniType'), "Se requiere el tipo de DNI."),
+        dniProvider: checkNotNull(_.get(values, "dniProvider"), "Se requiere DNI del proveedor."),
+        name: checkNotNull(_.get(values, "name"), "Se requiere el nombre del proveedor."),
+        billNumber: checkNotNull(_.get(values, 'billNumber'), "Se requiere el número de factura."),
         billValue:
-            checkNotNull(values.billValue, "Se requiere el valor de la factura.") ||
-            checkArgument(values.billValue <= 0, "El valor de la factura debe ser mayor a cero."),
+            checkNotNull(_.get(values, "billValue"), "Se requiere el valor de la factura.") ||
+            checkArgument(_.get(values, "billValue") <= 0, "El valor de la factura debe ser mayor a cero."),
     };
     return _.omitBy(errors, _.isNil);
 };
-const validate = values => _.assign({}, validateRequired(values), validateDates(values));
 
-/* function sendFormData() {
-  axios({
-    method: "POST",
-    url: "http://192.168.2.108:9640/gestionpagosprevencionapi/v1/bill",
-    data: {
-      dniProvider: values.dniType + values.dniProvider,
-      billNumber: values.billNumber,
-      billValue: values.billValue,
-      billDate: values.billDate,
-      billArrivalDate: values.billArrivalDate
-    }
-  })
-    .then(response => {
-      console.log(response.data);
-      return response.data;
-    })
-    .catch(error => {
-      console.log(error.response);
-      return "error";
-    });
-} */
+const validate = values => _.assign({}, validateRequired(values), validateDates(values));
 
 const formikComponent = withFormik({
     mapPropsToValues: () => ({
@@ -361,7 +337,8 @@ const formikComponent = withFormik({
         micrositio: "",
         billNumber: "",
         billValue: 0,
-        billDate: "00/00/0000",
+        billDate: "",
+        billArrivalDate: "",
     }),
     validate,
     handleSubmit: (values, { props }) => {

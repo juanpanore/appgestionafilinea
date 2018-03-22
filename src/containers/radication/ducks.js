@@ -169,7 +169,9 @@ const httpFulfilled = action => response => ({
 });
 
 export const searchProviderEpic$ = action$ =>
-    action$.ofType(SEARCH_PROVIDER_DATA_REQUESTED).mergeMap(action => {
+    action$.ofType(SEARCH_PROVIDER_DATA_REQUESTED)
+    .debounceTime(400)
+    .mergeMap(action => {
         const { payload: { idType, id } } = action;
         const url = `/v1/provider/${idType + id}`;
         const promise = axios.get(url);
@@ -222,13 +224,14 @@ export const sendBillEpic$ = action$ =>
             )
             .catch(error => {
                 const { response } = error;
-                if (_.isEqual(response.status, 500)) {
+                const statusResponse = _.get(response, 'status');
+                if (_.isEqual(statusResponse, 500)) {
                     return Observable.of(
                         httpError(SEND_BILL_DATA_FAILED, error),
                         toggleSnackbar("Error en el servidor."),
                     );
                 }
-                if (_.isEqual(response.status, 400)) {
+                if (_.isEqual(statusResponse, 400)) {
                     return Observable.of(
                         httpError(SEND_BILL_DATA_FAILED, error),
                         toggleSnackbar("Error validando la factura."),
@@ -251,7 +254,8 @@ export const searchDocTypesEpic$ = action$ =>
             .concatMap(resultAction => Observable.of(resultAction))
             .catch(error => {
                 const { response } = error;
-                if (_.isEqual(response.status, 404)) {
+                const statusResponse = _.get(response, 'status');
+                if (_.isEqual(statusResponse, 404)) { 
                     return Observable.of(
                         {
                             type: SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA,
