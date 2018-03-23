@@ -6,7 +6,7 @@ import TextField from "material-ui/TextField";
 import _ from "lodash";
 import TodayIcon from "material-ui/svg-icons/action/today";
 import IconButton from "material-ui/IconButton";
-import areIntlLocalesSupported from 'intl-locales-supported';
+import areIntlLocalesSupported from "intl-locales-supported";
 import { grey400 } from "material-ui/styles/colors";
 
 const dateformat = "DD/MM/YYYY";
@@ -21,12 +21,40 @@ const styles = {
     content: { minWidth: 256 },
     tableContent: { borderCollapse: "collapse", width: "100%" },
     textContent: { padding: 0 },
-    dateContent: { boxSizing: "border-box", width: 36, padding: 0, verticalAlign: "top" },
-    buttonDateContent: { width: 36, height: 66, paddingTop: 29, boxSizing: "border-box" },
+    dateContent: {
+        boxSizing: "border-box",
+        width: 36,
+        padding: 0,
+        verticalAlign: "top"
+    },
+    buttonDateContent: {
+        width: 36,
+        height: 66,
+        paddingTop: 29,
+        boxSizing: "border-box"
+    },
     icon: { width: 22, height: 22 },
-    buttonIcon: { boxSizing: "border-box", width: 36, height: 36, padding: "4px 3px", zIndex: 0 },
-    datePicker: { boxSizing: "border-box", width: 36, height: 38, backgroundColor: "transparent", marginTop: -36 },
-    textDatePicker: { width: 36, height: 36, paddingTop: 7, cursor: "pointer", fontSize: 0 }
+    buttonIcon: {
+        boxSizing: "border-box",
+        width: 36,
+        height: 36,
+        padding: "4px 3px",
+        zIndex: 0
+    },
+    datePicker: {
+        boxSizing: "border-box",
+        width: 36,
+        height: 38,
+        backgroundColor: "transparent",
+        marginTop: -36
+    },
+    textDatePicker: {
+        width: 36,
+        height: 36,
+        paddingTop: 7,
+        cursor: "pointer",
+        fontSize: 0
+    }
 };
 
 export default class DatePickerFormat extends Component {
@@ -44,7 +72,7 @@ export default class DatePickerFormat extends Component {
         onChange: PropTypes.func.isRequired,
         value: PropTypes.string.isRequired,
         width: PropTypes.number,
-        fullWidth: PropTypes.bool,
+        fullWidth: PropTypes.bool
     };
 
     state = {
@@ -68,25 +96,33 @@ export default class DatePickerFormat extends Component {
         let DateTimeFormat;
         const pathIntl = `intl/locale-data/jsonp/${localeLanguage}`;
         if (window.Intl) {
-            if (areIntlLocalesSupported('es')) {
-                DateTimeFormat = _.get(global, 'Intl.DateTimeFormat');
+            if (areIntlLocalesSupported("es")) {
+                DateTimeFormat = _.get(global, "Intl.DateTimeFormat");
             }
         } else {
-            require.ensure([
-                "intl",
-                pathIntl
-            ], (require) => {
+            require.ensure(["intl", pathIntl], require => {
                 require("intl");
                 // eslint-disable-next-line
                 require(pathIntl);
-                DateTimeFormat = _.get(global, 'Intl.DateTimeFormat');
+                DateTimeFormat = _.get(global, "Intl.DateTimeFormat");
             });
         }
-        this.setState({ minDate, maxDate, textDate: value, currentDate, DateTimeFormat });
+        this.setState({
+            minDate,
+            maxDate,
+            textDate: value,
+            currentDate,
+            DateTimeFormat
+        });
     }
 
     componentWillUnmount() {
-        this.setState({ minDate: undefined, maxDate: undefined, textDate: "", currentDate: "" });
+        this.setState({
+            minDate: undefined,
+            maxDate: undefined,
+            textDate: "",
+            currentDate: ""
+        });
     }
 
     onChangeValue = (e, value) => {
@@ -100,8 +136,15 @@ export default class DatePickerFormat extends Component {
         const { name, onChange, value } = this.props;
         const { textDate, currentDate } = this.state;
         const emptyText =
-            _.isEqual(textDate, "") || _.isNull(textDate) || _.isUndefined(textDate) || !validDate(textDate);
-        const emptyValue = _.isEqual(value, "") || _.isNull(value) || _.isUndefined(value) || !validDate(value);
+            _.isEqual(textDate, "") ||
+            _.isNull(textDate) ||
+            _.isUndefined(textDate) ||
+            !validDate(textDate);
+        const emptyValue =
+            _.isEqual(value, "") ||
+            _.isNull(value) ||
+            _.isUndefined(value) ||
+            !validDate(value);
         if (emptyText && emptyValue) {
             this.setState({ textDate: currentDate });
             onChange(name, currentDate);
@@ -115,7 +158,11 @@ export default class DatePickerFormat extends Component {
     onBlurText = () => {
         const { name, onChange } = this.props;
         const { textDate } = this.state;
-        if (_.isEqual(textDate, "") || _.isNull(textDate) || _.isUndefined(textDate)) {
+        if (
+            _.isEqual(textDate, "") ||
+            _.isNull(textDate) ||
+            _.isUndefined(textDate)
+        ) {
             this.setState({ textDate: "" });
             onChange(name, "");
         } else if (validDate(textDate)) {
@@ -128,7 +175,14 @@ export default class DatePickerFormat extends Component {
     };
 
     render() {
-        const { name, floatingLabelText, value, width, fullWidth, errorText } = this.props;
+        const {
+            name,
+            floatingLabelText,
+            value,
+            width,
+            fullWidth,
+            errorText
+        } = this.props;
         const { minDate, maxDate, textDate, DateTimeFormat } = this.state;
         const widthElement = fullWidth ? "100%" : width;
         return (
@@ -153,31 +207,38 @@ export default class DatePickerFormat extends Component {
                             </td>
                             <td style={styles.dateContent}>
                                 <div style={styles.buttonDateContent}>
-                                      <IconButton
-                                          iconStyle={styles.icon}
-                                          style={styles.buttonIcon}
-                                      >
-                                          <TodayIcon color={grey400} />
-                                      </IconButton>
-                                      <DatePicker
-                                          DateTimeFormat={DateTimeFormat}
-                                          locale="es"
-                                          name={name}
-                                          autoOk
-                                          mode="portrait"
-                                          minDate={minDate}
-                                          maxDate={maxDate}
-                                          value={moment(value, dateformat).toDate()}
-                                          defaultDate={moment(moment(value, dateformat).toDate())}
-                                          formatDate={date => moment(date).format(dateformat)}
-                                          okLabel="ACEPTAR"
-                                          cancelLabel="CANCELAR"
-                                          onChange={this.onChangeValue}
-                                          onClick={this.onHandleResetDate}
-                                          hideCalendarDate={false}
-                                          style={styles.datePicker}
-                                          textFieldStyle={styles.textDatePicker}
-                                      />
+                                    <IconButton
+                                        iconStyle={styles.icon}
+                                        style={styles.buttonIcon}
+                                    >
+                                        <TodayIcon color={grey400} />
+                                    </IconButton>
+                                    <DatePicker
+                                        DateTimeFormat={DateTimeFormat}
+                                        locale="es"
+                                        name={name}
+                                        autoOk
+                                        mode="portrait"
+                                        minDate={minDate}
+                                        maxDate={maxDate}
+                                        value={moment(
+                                            value,
+                                            dateformat
+                                        ).toDate()}
+                                        defaultDate={moment(
+                                            moment(value, dateformat).toDate()
+                                        )}
+                                        formatDate={date =>
+                                            moment(date).format(dateformat)
+                                        }
+                                        okLabel="ACEPTAR"
+                                        cancelLabel="CANCELAR"
+                                        onChange={this.onChangeValue}
+                                        onClick={this.onHandleResetDate}
+                                        hideCalendarDate={false}
+                                        style={styles.datePicker}
+                                        textFieldStyle={styles.textDatePicker}
+                                    />
                                 </div>
                             </td>
                         </tr>

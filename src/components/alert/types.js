@@ -46,7 +46,7 @@ export function getTextType(type, title){
     }
     switch (type) {
         case ERROR:
-            return "¡¡¡Error!!!";
+            return "¡Error!";
         case SUCCESS:
             return "Correcto";
         case INFO:
