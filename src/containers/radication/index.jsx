@@ -148,8 +148,9 @@ class FormRadicacion extends Component {
     onChangeCurrency = e => {
         const { setFieldValue } = this.props;
         const billValue = e.target.value;
+        console.log("Valor q se ingresa: ", billValue);
         const valueInt = Number(billValue.replace(/[^0-9\b]+/g, ""));
-        // console.log("el valor que se le va a mandar a la factura", valueInt);
+        console.log("el valor que se le va a mandar a la factura", valueInt);
         setFieldValue("billValue", valueInt);
     };
 
@@ -343,7 +344,7 @@ class FormRadicacion extends Component {
                                     floatingLabelText="Valor factura"
                                     name="billValue"
                                     type="number"
-                                    onChange={this.onChangeCurrency}
+                                    onChange={handleChange}
                                     errorText={touched.billValue && errors.billValue}
                                 >
                                     <CurrencyInput
