@@ -34,7 +34,7 @@ const styles = {
     content: {
         margin: 0,
         padding: 0,
-        boxSizing: "border-box",
+        boxSizing: "border-box"
     },
     titleHead: {
         boxSizing: "border-box",
@@ -55,7 +55,7 @@ const styles = {
     rowContent: {
         margin: 0,
         padding: 8,
-        boxSizing: "border-box",
+        boxSizing: "border-box"
     },
     contentBody: {
         width: "100%",
@@ -137,7 +137,7 @@ class ContentCollapse extends PureComponent {
             {},
             styles.opened,
             { marginTop, marginBottom, borderWidth },
-            getPropStyle(true, visibleHead)
+            getPropStyle(open, visibleHead)
         );
         return (
             <Row style={styleContent}>
@@ -161,7 +161,11 @@ class ContentCollapse extends PureComponent {
                         </Row>
                     )}
                     <Row style={styles.rowContent}>
-                        <Col style={_.assign({}, styles.contentBody, {padding: paddingContent})}>
+                        <Col
+                            style={_.assign({}, styles.contentBody, {
+                                padding: paddingContent
+                            })}
+                        >
                             {children}
                         </Col>
                     </Row>
