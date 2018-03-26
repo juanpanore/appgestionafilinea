@@ -5,7 +5,7 @@ const webpack = require("webpack");
 const path = require("path");
 const common = require("./webpack.common.js");
 
-const serverPort = 3000;
+const serverPort = 9630;
 
 module.exports = merge(common, {
     mode: "development",

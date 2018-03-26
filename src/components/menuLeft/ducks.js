@@ -6,11 +6,11 @@ const OPEN_MENU = "payments/menu-left/OPEN_MENU";
 
 const initialState = Map({
     sizeMenu: menuNormal,
-    openMenu: true,
+    openMenu: true
 });
 
 export default createReducer(initialState, {
-    [OPEN_MENU]: state => state.set("openMenu", true),
+    [OPEN_MENU]: state => state.set("openMenu", true)
     /* [OPEN_MENU]: state => {
         const open = !state.get("openMenu");
         const size = open ? menuNormal : menuSmall;
@@ -23,6 +23,6 @@ export default createReducer(initialState, {
 
 export function showMenu() {
     return {
-        type: OPEN_MENU,
+        type: OPEN_MENU
     };
 }

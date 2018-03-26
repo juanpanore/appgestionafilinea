@@ -37,7 +37,7 @@ const initialState = Map({
     docTypes: [],
     loadingDocTypes: false,
     statusDocType: SEARCH_DOC_TYPES_DATA_CLEAN,
-    statusDocTypeError: "",
+    statusDocTypeError: ""
 });
 export default createReducer(initialState, {
     [SEARCH_PROVIDER_DATA_IN_PROGRESS]: state =>
@@ -48,14 +48,14 @@ export default createReducer(initialState, {
                 .set("provider", {})
                 .set("loadingProvider", false)
                 .set("statusProviderError", "")
-                .set("statusProvider", SEARCH_PROVIDER_DATA_CLEAN),
+                .set("statusProvider", SEARCH_PROVIDER_DATA_CLEAN)
         ),
     [SEARCH_PROVIDER_DATA_FAILED]: (state, action) =>
         state.withMutations(map =>
             map
                 .set("loadingProvider", false)
                 .set("statusProvider", action.type)
-                .set("statusProviderError", action.payload.err),
+                .set("statusProviderError", action.payload.err)
         ),
     [SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA]: (state, action) =>
         state.withMutations(map => map.set("loadingProvider", false).set("statusProvider", action.type)),
@@ -64,7 +64,7 @@ export default createReducer(initialState, {
             map
                 .set("loadingProvider", false)
                 .set("statusProvider", SEARCH_PROVIDER_DATA_FULFILLED_DATA)
-                .set("provider", action.payload.data),
+                .set("provider", action.payload.data)
         ),
     [SEND_BILL_DATA_IN_PROGRESS]: state => state.set("sendingBill", true),
     [SEND_BILL_DATA_FAILED]: (state, action) =>
@@ -72,21 +72,21 @@ export default createReducer(initialState, {
             map
                 .set("sendingBill", false)
                 .set("statusBill", action.type)
-                .set("statusBillError", action.payload.err),
+                .set("statusBillError", action.payload.err)
         ),
     [SEND_BILL_DATA_FULFILLED]: (state, action) =>
         state.withMutations(map =>
             map
                 .set("sendingBill", false)
                 .set("statusBill", SEND_BILL_DATA_FULFILLED)
-                .set("bill", action.payload.data),
+                .set("bill", action.payload.data)
         ),
     [SEND_BILL_DATA_CLEAN]: state =>
         state.withMutations(map =>
             map
                 .set("sendingBill", false)
                 .set("statusBillError", "")
-                .set("statusBill", SEND_BILL_DATA_CLEAN),
+                .set("statusBill", SEND_BILL_DATA_CLEAN)
         ),
     [SEARCH_DOC_TYPES__DATA_IN_PROGRESS]: state => state.set("loadingDocTypes", true).set("docTypes", []),
     [SEARCH_DOC_TYPES_DATA_CLEAN]: state =>
@@ -95,14 +95,14 @@ export default createReducer(initialState, {
                 .set("docTypes", [])
                 .set("loadingDocTypes", false)
                 .set("statusDocTypeError", "")
-                .set("statusDocType", SEARCH_DOC_TYPES_DATA_CLEAN),
+                .set("statusDocType", SEARCH_DOC_TYPES_DATA_CLEAN)
         ),
     [SEARCH_DOC_TYPES_DATA_FAILED]: (state, action) =>
         state.withMutations(map =>
             map
                 .set("loadingDocTypes", false)
                 .set("statusDocType", action.type)
-                .set("statusDocTypeError", action.payload.err),
+                .set("statusDocTypeError", action.payload.err)
         ),
     [SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA]: (state, action) =>
         state.withMutations(map => map.set("loadingDocTypes", false).set("statusDocType", action.type)),
@@ -111,8 +111,8 @@ export default createReducer(initialState, {
             map
                 .set("loadingDocTypes", false)
                 .set("statusDocType", SEARCH_DOC_TYPES_DATA_FULFILLED)
-                .set("docTypes", action.payload.data),
-        ),
+                .set("docTypes", action.payload.data)
+        )
 });
 
 export function searchProviderData(idType, id) {
@@ -120,14 +120,14 @@ export function searchProviderData(idType, id) {
         type: SEARCH_PROVIDER_DATA_REQUESTED,
         payload: {
             idType,
-            id,
-        },
+            id
+        }
     };
 }
 
 export function searchDocTypes() {
     return {
-        type: SEARCH_DOC_TYPES_DATA_REQUESTED,
+        type: SEARCH_DOC_TYPES_DATA_REQUESTED
     };
 }
 
@@ -137,19 +137,19 @@ export function sendBillData(dniProvider, delegation, bill) {
         payload: {
             dniProvider,
             bill,
-            delegation,
-        },
+            delegation
+        }
     };
 }
 
 export function cleanData() {
     return {
-        type: SEARCH_PROVIDER_DATA_CLEAN,
+        type: SEARCH_PROVIDER_DATA_CLEAN
     };
 }
 export function cleanBillData() {
     return {
-        type: SEND_BILL_DATA_CLEAN,
+        type: SEND_BILL_DATA_CLEAN
     };
 }
 
@@ -157,50 +157,51 @@ function httpError(action, error) {
     return {
         type: action,
         payload: {
-            err: _.toString(error),
-        },
+            err: _.toString(error)
+        }
     };
 }
 
 const httpFulfilled = action => response => ({
     type: action,
     payload: {
-        data: response.data,
-    },
+        data: response.data
+    }
 });
 
 export const searchProviderEpic$ = action$ =>
-    action$.ofType(SEARCH_PROVIDER_DATA_REQUESTED)
-    .debounceTime(400)
-    .mergeMap(action => {
-        const { payload: { idType, id } } = action;
-        const url = `/v1/provider/${idType + id}`;
-        const promise = axios.get(url);
-        return Observable.fromPromise(promise)
-            .map(httpFulfilled(SEARCH_PROVIDER_DATA_FULFILLED_DATA))
-            .concatMap(resultAction => Observable.of(resultAction))
-            .catch(error => {
-                const { response } = error;
-                if (_.isEqual(_.get(response, "status"), 404)) {
+    action$
+        .ofType(SEARCH_PROVIDER_DATA_REQUESTED)
+        .debounceTime(400)
+        .mergeMap(action => {
+            const { payload: { idType, id } } = action;
+            const url = `/v1/provider/${idType + id}`;
+            const promise = axios.get(url);
+            return Observable.fromPromise(promise)
+                .map(httpFulfilled(SEARCH_PROVIDER_DATA_FULFILLED_DATA))
+                .concatMap(resultAction => Observable.of(resultAction))
+                .catch(error => {
+                    const { response } = error;
+                    if (_.isEqual(_.get(response, "status"), 404)) {
+                        return Observable.of(
+                            {
+                                type: SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA
+                            },
+                            showAlert("Proveedor no encontrado", MESSAGES.INFO)
+                        );
+                    }
                     return Observable.of(
-                        {
-                            type: SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA,
-                        },
-                        showAlert("Proveedor no encontrado", MESSAGES.INFO),
+                        httpError(SEARCH_PROVIDER_DATA_FAILED, error),
+                        showAlert("Error consultando el proveedor", MESSAGES.ERROR)
                     );
-                }
-                return Observable.of(
-                    httpError(SEARCH_PROVIDER_DATA_FAILED, error),
-                    showAlert("Error consultando el proveedor", MESSAGES.ERROR),
-                );
-            })
-            .startWith({ type: SEARCH_PROVIDER_DATA_IN_PROGRESS });
-    });
+                })
+                .startWith({ type: SEARCH_PROVIDER_DATA_IN_PROGRESS });
+        });
 
 export const sendBillEpic$ = action$ =>
     action$.ofType(SEND_BILL_DATA_REQUESTED).mergeMap(action => {
         const {
-            payload: { dniProvider, delegation, bill: { billNumber, billArrivalDate, billDate, billValue } },
+            payload: { dniProvider, delegation, bill: { billPrefix, billSuffix, billArrivalDate, billDate, billValue } }
         } = action;
         const url = `/v1/bill/`;
         const promise = axios({
@@ -208,39 +209,46 @@ export const sendBillEpic$ = action$ =>
             url,
             data: {
                 dniProvider,
-                billNumber,
+                billPrefix,
+                billSuffix,
                 billArrivalDate,
                 billDate,
                 billValue,
-                delegation,
-            },
+                delegation
+            }
         });
         return Observable.fromPromise(promise)
             .map(httpFulfilled(SEND_BILL_DATA_FULFILLED))
             .concatMap(resultAction =>
                 Observable.of(
                     resultAction,
-                    showAlert(`Radicación exitosa: ${_.get(resultAction, "payload.data.id")}`, MESSAGES.SUCCESS),
-                ),
+                    showAlert(`Radicación exitosa: ${_.get(resultAction, "payload.data.id")}`, MESSAGES.SUCCESS)
+                )
             )
             .catch(error => {
                 const { response } = error;
-                const statusResponse = _.get(response, 'status');
+                const statusResponse = _.get(response, "status");
                 if (_.isEqual(statusResponse, 500)) {
                     return Observable.of(
                         httpError(SEND_BILL_DATA_FAILED, error),
-                        showAlert("Error en el servidor.", MESSAGES.ERROR),
+                        showAlert("Error en el servidor.", MESSAGES.ERROR)
                     );
                 }
                 if (_.isEqual(statusResponse, 400)) {
                     return Observable.of(
                         httpError(SEND_BILL_DATA_FAILED, error),
-                        showAlert("Error validando la factura.", MESSAGES.ERROR),
+                        showAlert("Error validando la factura.", MESSAGES.ERROR)
+                    );
+                }
+                if (_.isEqual(statusResponse, 412)) {
+                    return Observable.of(
+                        httpError(SEND_BILL_DATA_FAILED, error),
+                        showAlert("Ya existe el nùmero de factura para el proveedor seleccionado.", MESSAGES.INFO)
                     );
                 }
                 return Observable.of(
                     httpError(SEND_BILL_DATA_FAILED, error),
-                    showAlert("Ocurrió un error inesperado, por favor, intentelo de nuevo.", MESSAGES.WARNING),
+                    showAlert("Ocurrió un error inesperado, por favor, intentelo de nuevo.", MESSAGES.WARNING)
                 );
             })
             .startWith({ type: SEND_BILL_DATA_IN_PROGRESS });
@@ -255,18 +263,16 @@ export const searchDocTypesEpic$ = action$ =>
             .concatMap(resultAction => Observable.of(resultAction))
             .catch(error => {
                 const { response } = error;
-                const statusResponse = _.get(response, 'status');
+                const statusResponse = _.get(response, "status");
                 if (_.isEqual(statusResponse, 404)) {
                     return Observable.of(
                         {
-                            type: SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA,
+                            type: SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA
                         },
-                        showAlert("No se econtraron datos.", MESSAGES.INFO),
+                        showAlert("No se econtraron datos.", MESSAGES.INFO)
                     );
                 }
-                return Observable.of(
-                    httpError(SEARCH_DOC_TYPES_DATA_FAILED, error),
-                );
+                return Observable.of(httpError(SEARCH_DOC_TYPES_DATA_FAILED, error));
             })
             .startWith({ type: SEARCH_DOC_TYPES__DATA_IN_PROGRESS });
     });

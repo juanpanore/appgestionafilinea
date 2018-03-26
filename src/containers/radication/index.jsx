@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import PropTypes, { func, bool, string, shape } from "prop-types";
+import PropTypes, { func, bool, string } from "prop-types";
 import { Row, Col } from "react-flexbox-grid";
 import moment from "moment";
 import { withFormik } from "formik";
+import axios from "axios";
 import _ from "lodash";
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
@@ -22,10 +23,9 @@ import {
     searchDocTypes as sdt,
     SEND_BILL_DATA_FULFILLED
 } from "./ducks";
-import {
-    showCollapse as sc,
-    closeCollapse as cc
-} from "../../components/contentCollapse/ducks";
+import { showCollapse as sc, closeCollapse as cc } from "../../components/contentCollapse/ducks";
+import { showAlert as sa } from "../../components/alert/ducks";
+import { MESSAGES } from "../../components/alert/types";
 import DatePickerFormat from "../../components/dateFormat";
 import ContentCollapse from "../../components/contentCollapse";
 
@@ -37,13 +37,13 @@ const dividerStyle = {
 
 class FormRadicacion extends Component {
     static propTypes = {
-        searchProviderData: func.isRequired,
         showCollapse: func.isRequired,
         closeCollapse: func.isRequired,
+        showAlert: func.isRequired,
         cleanData: func.isRequired,
         searchDocTypes: func.isRequired,
         cleanBillData: func.isRequired,
-        provider: shape().isRequired,
+        // provider: shape().isRequired,
         loadingProvider: bool.isRequired,
         sendingBill: bool.isRequired,
         statusBill: string.isRequired,
@@ -56,11 +56,14 @@ class FormRadicacion extends Component {
         resetForm: func.isRequired,
         values: PropTypes.shape({
             dniProvider: PropTypes.string,
+            providerDelegation: PropTypes.number,
             dniType: PropTypes.string,
             dniValue: PropTypes.string,
             name: PropTypes.string,
-            micrositio: PropTypes.bool,
+            micrositio: PropTypes.string,
             billNumber: PropTypes.string,
+            billPrefix: PropTypes.string,
+            billSuffix: PropTypes.number,
             billValue: PropTypes.number,
             lastSettlement: PropTypes.string,
             billDate: PropTypes.string,
@@ -73,6 +76,7 @@ class FormRadicacion extends Component {
             name: PropTypes.string,
             micrositio: PropTypes.string,
             billNumber: PropTypes.string,
+            billSuffix: PropTypes.string,
             billValue: PropTypes.string,
             billDate: PropTypes.string,
             billArrivalDate: PropTypes.string
@@ -103,38 +107,85 @@ class FormRadicacion extends Component {
     }
 
     componentDidUpdate() {
-        const {
-            provider,
-            setFieldValue,
-            statusBill,
-            values,
-            docTypes,
-            closeCollapse,
-            showCollapse
-        } = this.props;
-        const { idCollapse } = this.state;
-        const providerName = _.get(provider, "providerName", "");
-        const microsite = _.get(provider, "micrositio", false) ? "Sí" : "No";
+        const { statusBill, values, setFieldValue, closeCollapse /* ,
+      showCollapse */ } = this.props;
         const idRadicado = _.get(values, "id", 0);
-        const docTypeValue = _.get(docTypes, "value", "");
-        if (!_.isEqual(providerName, _.get(values, "name"))) {
-            setFieldValue("name", providerName);
-            showCollapse(idCollapse);
-        } //  _.get(values, 'micrositio', "")
-        if (microsite !== "") {
-            setFieldValue("micrositio", microsite);
-        }
+        // const { idCollapse } = this.state;
+        /* const providerName = _.get(provider, "providerName", "");
+    const microsite = _.get(provider, "micrositio", false) ? "Sí" : "No";
+    const idRadicado = _.get(values, "id", 0);
+    // const docTypeValue = _.get(docTypes, "value", "");
+    if (!_.isEqual(providerName, _.get(values, "name"))) {
+      setFieldValue("name", providerName);
+    } //  _.get(values, 'micrositio', "")
+    if (microsite !== "") {
+      setFieldValue("micrositio", microsite);
+      // showCollapse(idCollapse);
+    } */
+
         if (_.isEqual(statusBill, SEND_BILL_DATA_FULFILLED)) {
+            const { idCollapse } = this.state;
             this.props.resetForm();
             setFieldValue("idRadicado", idRadicado);
             this.props.cleanData();
             this.props.cleanBillData();
+            closeCollapse(idCollapse);
         }
     }
 
     onChangeValueDate = (field, value) => {
         const { setFieldValue } = this.props;
         setFieldValue(field, value);
+    };
+
+    onBillSuffixChange = e => {
+        const { setFieldValue, values } = this.props;
+        setFieldValue("billSuffix", e.target.value);
+        const val = values.billPrefix + e.target.value;
+        setFieldValue("billNumber", val);
+    };
+
+    onChangeCurrency = e => {
+        const { setFieldValue } = this.props;
+        const billValue = e.target.value;
+        const valueInt = Number(billValue.replace(/[^0-9\b]+/g, ""));
+        // console.log("el valor que se le va a mandar a la factura", valueInt);
+        setFieldValue("billValue", valueInt);
+    };
+
+    searchProvider = (dniType, dniProvider) => {
+        const { showCollapse, closeCollapse, setFieldValue, showAlert, values } = this.props;
+        const { idCollapse } = this.state;
+        const id = dniType + dniProvider;
+        axios
+            .get(`http://localhost:9640/gestionpagosprevencionapi/v1/provider/${id}`)
+            .then(response => {
+                // console.log(values);
+                // console.log(response);
+                // console.log(_.get(response, "status"));
+                if (_.isEqual(_.get(response, "status"), 200)) {
+                    setFieldValue("name", _.get(response, "data.providerName", ""));
+                    // this.setState({ providerDelegation: response.data.dniDelegation });
+                    values.providerDelegation = response.data.dniDelegation;
+                    // console.log("delegación: ", values.providerDelegation);
+                    const microsite = response.data.micrositio ? "Si" : "No";
+                    setFieldValue("micrositio", microsite);
+                    // const delegation = values.providerDelegation;
+                    // console.log("Se obtuvo la delegación: ", delegation);
+                    showCollapse(idCollapse);
+                } else {
+                    setFieldValue("name", "");
+                    setFieldValue("micrositio", "");
+                    closeCollapse(idCollapse);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                setFieldValue("name", "");
+                setFieldValue("micrositio", "");
+                closeCollapse(idCollapse);
+                showAlert("No se encontró proveedor.", MESSAGES.INFO);
+            });
     };
 
     render() {
@@ -147,8 +198,7 @@ class FormRadicacion extends Component {
             handleSubmit,
             setFieldValue,
             loadingProvider,
-            sendingBill,
-            searchProviderData
+            sendingBill
         } = this.props;
         const { idCollapse } = this.state;
         return (
@@ -179,9 +229,7 @@ class FormRadicacion extends Component {
                             <SelectField
                                 floatingLabelText="Tipo identificación"
                                 value={values.dniType}
-                                onChange={(e, key, value) =>
-                                    setFieldValue("dniType", value)
-                                }
+                                onChange={(e, key, value) => setFieldValue("dniType", value)}
                                 errorText={touched.dniType && errors.dniType}
                                 fullWidth
                                 dropDownMenuProps={{
@@ -213,16 +261,11 @@ class FormRadicacion extends Component {
                                 onChange={handleChange}
                                 onKeyPress={e => {
                                     if (e.key === "Enter") {
-                                        searchProviderData(
-                                            _.get(values, "dniType"),
-                                            _.get(values, "dniProvider")
-                                        );
+                                        this.searchProvider(values.dniType, values.dniProvider, setFieldValue());
                                     }
                                 }}
                                 maxLength={20}
-                                errorText={
-                                    touched.dniProvider && errors.dniProvider
-                                }
+                                errorText={touched.dniProvider && errors.dniProvider}
                                 fullWidth
                                 disabled={loadingProvider}
                             />
@@ -247,9 +290,7 @@ class FormRadicacion extends Component {
                                 style={{ width: 130 }}
                                 value={values.micrositio}
                                 onChange={handleChange}
-                                errorText={
-                                    touched.micrositio && errors.micrositio
-                                }
+                                errorText={touched.micrositio && errors.micrositio}
                                 fullWidth
                                 disabled
                             />
@@ -265,65 +306,79 @@ class FormRadicacion extends Component {
                         <Row>
                             <Col xs>
                                 <TextField
+                                    floatingLabelText="Prefijo factura"
+                                    name="billPrefix"
+                                    value={values.billPrefix}
+                                    onChange={handleChange}
+                                    onInput={e => {
+                                        e.target.value = e.target.value.toString().slice(0, 6);
+                                    }}
+                                />
+                            </Col>
+                            <Col xs>
+                                <TextField
+                                    floatingLabelText="Sufijo factura"
+                                    name="billSuffix"
+                                    value={values.billSuffix}
+                                    type="number"
+                                    onChange={this.onBillSuffixChange}
+                                    onInput={e => {
+                                        e.target.value = e.target.value.toString().slice(0, 10);
+                                    }}
+                                    errorText={touched.billSuffix && errors.billSuffix}
+                                />
+                            </Col>
+                            <Col xs>
+                                <TextField
                                     floatingLabelText="Número factura"
                                     name="billNumber"
                                     value={values.billNumber}
                                     onChange={handleChange}
-                                    errorText={
-                                        touched.billNumber && errors.billNumber
-                                    }
-                                    disbled={checkNotNull(values.name)}
+                                    errorText={touched.billNumber && errors.billNumber}
+                                    disabled
                                 />
                             </Col>
                             <Col xs>
                                 <TextField
                                     floatingLabelText="Valor factura"
                                     name="billValue"
-                                    value={values.billValue}
-                                    onChange={handleChange}
-                                    errorText={
-                                        touched.billValue && errors.billValue
-                                    }
+                                    type="number"
+                                    onChange={this.onChangeCurrency}
+                                    errorText={touched.billValue && errors.billValue}
                                 >
                                     <CurrencyInput
-                                        precision={3}
-                                        separator="."
-                                        delimiter="."
-                                        unit="$"
+                                        name="billValue"
+                                        value={values.billValue}
+                                        precision={2}
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        prefix="$"
+                                        onChangeEvent={this.onChangeCurrency}
                                     />
                                 </TextField>
                             </Col>
                             <Col xs>
                                 <DatePickerFormat
-                                    floatingLabelText="Fecha factura (DD/MM/YYYY)"
+                                    floatingLabelText="Fecha factura"
                                     name="billDate"
                                     onChange={this.onChangeValueDate}
-                                    errorText={
-                                        touched.billDate && errors.billDate
-                                    }
+                                    errorText={touched.billDate && errors.billDate}
                                     value={values.billDate}
                                 />
                             </Col>
                             <Col xs>
                                 <DatePickerFormat
-                                    floatingLabelText="Fecha llegada (DD/MM/YYYY)"
+                                    floatingLabelText="Fecha llegada"
                                     name="billArrivalDate"
                                     onChange={this.onChangeValueDate}
-                                    errorText={
-                                        touched.billArrivalDate &&
-                                        errors.billArrivalDate
-                                    }
+                                    errorText={touched.billArrivalDate && errors.billArrivalDate}
                                     value={values.billArrivalDate}
                                 />
                             </Col>
                         </Row>
                         <Row end="xs">
                             <Col xs={3}>
-                                <RaisedButton
-                                    label="Radicar"
-                                    onClick={handleSubmit}
-                                    disabled={sendingBill}
-                                />
+                                <RaisedButton label="Radicar" onClick={handleSubmit} disabled={sendingBill} />
                             </Col>
                         </Row>
                     </ContentCollapse>
@@ -337,10 +392,7 @@ const validateDates = values => {
     const errors = {};
     const Oldyears = moment().subtract(5, "years");
     const oldYear = moment().subtract(1, "years");
-    const isValidBillDate = checkNotNull(
-        _.get(values, "billDate"),
-        "Se requiere la fecha de factura."
-    );
+    const isValidBillDate = checkNotNull(_.get(values, "billDate"), "Se requiere la fecha de factura.");
     const isValidBillArrivalDate = checkNotNull(
         _.get(values, "billArrivalDate"),
         "Se requiere la fecha de llegada de la factura."
@@ -352,98 +404,75 @@ const validateDates = values => {
             errors.billDate = "La fecha es superior a la fecha actual.";
         }
         if (moment(values.billDate, dateformat).isBefore(Oldyears, "day")) {
-            errors.billDate =
-                "La fecha no puede ser 5 años anterior a la fecha actual.";
+            errors.billDate = "La fecha no puede ser 5 años anterior a la fecha actual.";
         }
     }
 
     if (!_.isUndefined(isValidBillArrivalDate)) {
         errors.billArrivalDate = isValidBillArrivalDate;
     } else {
-        if (
-            moment(values.billArrivalDate, dateformat).isAfter(moment(), "day")
-        ) {
+        if (moment(values.billArrivalDate, dateformat).isAfter(moment(), "day")) {
             errors.billArrivalDate = "La fecha es superior a la fecha actual.";
         }
         if (_.isUndefined(isValidBillDate)) {
-            if (
-                moment(values.billArrivalDate, dateformat).isBefore(
-                    moment(values.billDate, dateformat),
-                    "day"
-                )
-            ) {
-                errors.billArrivalDate =
-                    "Fecha inferior a la fecha de factura.";
+            if (moment(values.billArrivalDate, dateformat).isBefore(moment(values.billDate, dateformat), "day")) {
+                errors.billArrivalDate = "Fecha inferior a la fecha de factura.";
             }
         }
-        if (
-            moment(values.billArrivalDate, dateformat).isBefore(oldYear, "day")
-        ) {
-            errors.billArrivalDate =
-                "Fecha anterior a un año de la fecha actual.";
+        if (moment(values.billArrivalDate, dateformat).isBefore(oldYear, "day")) {
+            errors.billArrivalDate = "Fecha anterior a un año de la fecha actual.";
         }
     }
     return errors;
 };
 
 const validateRequired = values => {
+    // console.log(values);
     const errors = {
-        dniType: checkNotNull(
-            _.get(values, "dniType"),
-            "Se requiere el tipo de DNI."
+        dniType: checkNotNull(_.get(values, "dniType"), "Se requiere el tipo de DNI."),
+        dniProvider: checkNotNull(_.get(values, "dniProvider"), "Se requiere DNI del proveedor."),
+        name: checkNotNull(_.get(values, "name"), "Se requiere el nombre del proveedor."),
+        billSuffix: checkArgument(
+            _.get(values, "billSuffix") <= 0,
+            "El valor del sufijo de factura debe ser mayor a cero."
         ),
-        dniProvider: checkNotNull(
-            _.get(values, "dniProvider"),
-            "Se requiere DNI del proveedor."
-        ),
-        name: checkNotNull(
-            _.get(values, "name"),
-            "Se requiere el nombre del proveedor."
-        ),
-        billNumber: checkNotNull(
-            _.get(values, "billNumber"),
-            "Se requiere el número de factura."
-        ),
-        billValue:
-            checkNotNull(
-                _.get(values, "billValue"),
-                "Se requiere el valor de la factura."
-            ) ||
-            checkArgument(
-                _.get(values, "billValue") <= 0,
-                "El valor de la factura debe ser mayor a cero."
-            )
+        billValue: checkArgument(_.get(values, "billValue") <= 0, "El valor de la factura debe ser mayor a cero.")
     };
     return _.omitBy(errors, _.isNil);
 };
 
-const validate = values =>
-    _.assign({}, validateRequired(values), validateDates(values));
+const validate = values => _.assign({}, validateRequired(values), validateDates(values));
 
 const formikComponent = withFormik({
-    mapPropsToValues: () => ({
-        dniProvider: "",
-        dniType: "",
-        name: "",
-        micrositio: false,
-        billNumber: "",
-        billValue: 0,
-        billDate: "",
-        billArrivalDate: ""
-    }),
+    mapPropsToValues: ({ provider }) => {
+        const providerName = _.get(provider, "providerName", "");
+        const microsite = _.get(provider, "micrositio", false) ? "Sí" : "No";
+        return {
+            dniProvider: "",
+            dniType: "",
+            name: providerName,
+            micrositio: microsite,
+            billNumber: "",
+            billPrefix: "",
+            billSuffix: 0,
+            billValue: 0,
+            billDate: "",
+            billArrivalDate: "",
+            idCollapse: true
+        };
+    },
     validate,
     handleSubmit: (values, { props }) => {
-        const valuesToSend = _.mapValues(values, value => {
-            if (_.isDate(value)) {
-                return moment(value).format("DD/MM/YYYY");
-            }
-            return value;
-        });
-        props.sendBillData(
-            valuesToSend.dniType + valuesToSend.dniProvider,
-            _.get(props, "provider.dniDelegation"),
-            valuesToSend
+        const valuesToSend = _.mapValues(
+            values,
+            value =>
+                /* if (_.isDate(value)) {
+        return moment(value).format("DD/MM/YYYY");
+      } */
+                value
         );
+        // console.log("Lo que obtiene: ", values.providerDelegation);
+        props.sendBillData(valuesToSend.dniType + valuesToSend.dniProvider, 21, valuesToSend);
     }
 });
 
@@ -468,7 +497,8 @@ function mapDispatchToProps(dispatch) {
             sendBillData: sbd,
             cleanBillData: cbd,
             closeCollapse: cc,
-            showCollapse: sc
+            showCollapse: sc,
+            showAlert: sa
         },
         dispatch
     );
