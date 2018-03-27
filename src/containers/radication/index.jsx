@@ -221,20 +221,6 @@ class FormRadicacion extends Component {
         return (
             <Content>
                 <Row>
-                    <Col xsOffset={1} xs={10}>
-                        <div
-                            style={{
-                                fontSize: 14,
-                                textAlign: "right",
-                                width: "100%",
-                                marginBottom: 10
-                            }}
-                        >
-                            Último radicado: {values.idRadicado}
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
                     <Col>
                         <p>Información prestador</p>
                     </Col>
@@ -435,6 +421,20 @@ class FormRadicacion extends Component {
                             </Col>
                         </Row>
                     </ContentCollapse>
+                    <Row>
+                        <Col xsOffset={1} xs={10}>
+                            <div
+                                style={{
+                                    fontSize: 14,
+                                    textAlign: "right",
+                                    width: "100%",
+                                    marginBottom: 10
+                                }}
+                            >
+                                Último radicado: {values.idRadicado}
+                            </div>
+                        </Col>
+                    </Row>
                 </form>
             </Content>
         );
