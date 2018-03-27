@@ -3,7 +3,6 @@ import PropTypes, { func, bool, string } from "prop-types";
 import { Row, Col } from "react-flexbox-grid";
 import moment from "moment";
 import { withFormik } from "formik";
-import axios from "axios";
 import _ from "lodash";
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
@@ -13,6 +12,7 @@ import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
 import RaisedButton from "material-ui/RaisedButton";
 import Divider from "material-ui/Divider";
+import apiAxios from "../../api/index";
 import Content from "../../components/content";
 import { checkNotNull, checkArgument } from "../../functions/validations";
 import {
@@ -169,10 +169,8 @@ class FormRadicacion extends Component {
         } = this.props;
         const { idCollapse } = this.state;
         const id = dniType + dniProvider;
-        axios
-            .get(
-                `http://localhost:9640/gestionpagosprevencionapi/v1/provider/${id}`
-            )
+        apiAxios
+            .get(`v1/provider/${id}`)
             .then(response => {
                 // console.log(values);
                 // console.log(response);
