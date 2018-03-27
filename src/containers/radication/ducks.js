@@ -6,25 +6,40 @@ import createReducer from "../../util/createReducer";
 import { showAlert } from "../../components/alert/ducks";
 import { MESSAGES } from "../../components/alert/types";
 
-const SEARCH_PROVIDER_DATA_REQUESTED = "payments/bills-settlement/SEARCH_PROVIDER_DATA_REQUESTED";
-const SEARCH_PROVIDER_DATA_IN_PROGRESS = "payments/bills-settlement/SEARCH_PROVIDER_DATA_IN_PROGRESS";
-export const SEARCH_PROVIDER_DATA_FULFILLED_DATA = "payments/bills-settlement/SEARCH_PROVIDER_DATA_FULFILLED_DATA";
-const SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA = "payments/bills-settlement/SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA";
-const SEARCH_PROVIDER_DATA_FAILED = "payments/bills-settlement/SEARCH_PROVIDER_DATA_FAILED";
-const SEARCH_PROVIDER_DATA_CLEAN = "payments/bills-settlement/SEARCH_PROVIDER_DATA_CLEAN";
+const SEARCH_PROVIDER_DATA_REQUESTED =
+    "payments/bills-settlement/SEARCH_PROVIDER_DATA_REQUESTED";
+const SEARCH_PROVIDER_DATA_IN_PROGRESS =
+    "payments/bills-settlement/SEARCH_PROVIDER_DATA_IN_PROGRESS";
+export const SEARCH_PROVIDER_DATA_FULFILLED_DATA =
+    "payments/bills-settlement/SEARCH_PROVIDER_DATA_FULFILLED_DATA";
+const SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA =
+    "payments/bills-settlement/SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA";
+const SEARCH_PROVIDER_DATA_FAILED =
+    "payments/bills-settlement/SEARCH_PROVIDER_DATA_FAILED";
+const SEARCH_PROVIDER_DATA_CLEAN =
+    "payments/bills-settlement/SEARCH_PROVIDER_DATA_CLEAN";
 
-const SEND_BILL_DATA_REQUESTED = "payments/bills-settlement/SEND_BILL_DATA_REQUESTED";
-const SEND_BILL_DATA_IN_PROGRESS = "payments/bills-settlement/SEND_BILL_DATA_IN_PROGRESS";
+const SEND_BILL_DATA_REQUESTED =
+    "payments/bills-settlement/SEND_BILL_DATA_REQUESTED";
+const SEND_BILL_DATA_IN_PROGRESS =
+    "payments/bills-settlement/SEND_BILL_DATA_IN_PROGRESS";
 const SEND_BILL_DATA_FAILED = "payments/bills-settlement/SEND_BILL_DATA_FAILED";
-export const SEND_BILL_DATA_FULFILLED = "payments/bills-settlement/SEND_BILL_DATA_FULFILLED";
+export const SEND_BILL_DATA_FULFILLED =
+    "payments/bills-settlement/SEND_BILL_DATA_FULFILLED";
 const SEND_BILL_DATA_CLEAN = "payments/bills-settlement/SEND_BILL_DATA_CLEAN";
 
-const SEARCH_DOC_TYPES_DATA_REQUESTED = "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_REQUESTED";
-const SEARCH_DOC_TYPES__DATA_IN_PROGRESS = "payments/bills-settlement/SEARCH_DOC_TYPES__DATA_IN_PROGRESS";
-export const SEARCH_DOC_TYPES_DATA_FULFILLED = "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_FULFILLED";
-const SEARCH_DOC_TYPES_DATA_FAILED = "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_FAILED";
-const SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA = "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA";
-const SEARCH_DOC_TYPES_DATA_CLEAN = "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_CLEAN";
+const SEARCH_DOC_TYPES_DATA_REQUESTED =
+    "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_REQUESTED";
+const SEARCH_DOC_TYPES__DATA_IN_PROGRESS =
+    "payments/bills-settlement/SEARCH_DOC_TYPES__DATA_IN_PROGRESS";
+export const SEARCH_DOC_TYPES_DATA_FULFILLED =
+    "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_FULFILLED";
+const SEARCH_DOC_TYPES_DATA_FAILED =
+    "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_FAILED";
+const SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA =
+    "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA";
+const SEARCH_DOC_TYPES_DATA_CLEAN =
+    "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_CLEAN";
 
 const initialState = Map({
     provider: {},
@@ -41,7 +56,9 @@ const initialState = Map({
 });
 export default createReducer(initialState, {
     [SEARCH_PROVIDER_DATA_IN_PROGRESS]: state =>
-        state.withMutations(map => map.set("loadingProvider", true).set("provider", {})),
+        state.withMutations(map =>
+            map.set("loadingProvider", true).set("provider", {})
+        ),
     [SEARCH_PROVIDER_DATA_CLEAN]: state =>
         state.withMutations(map =>
             map
@@ -58,7 +75,9 @@ export default createReducer(initialState, {
                 .set("statusProviderError", action.payload.err)
         ),
     [SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA]: (state, action) =>
-        state.withMutations(map => map.set("loadingProvider", false).set("statusProvider", action.type)),
+        state.withMutations(map =>
+            map.set("loadingProvider", false).set("statusProvider", action.type)
+        ),
     [SEARCH_PROVIDER_DATA_FULFILLED_DATA]: (state, action) =>
         state.withMutations(map =>
             map
@@ -88,7 +107,8 @@ export default createReducer(initialState, {
                 .set("statusBillError", "")
                 .set("statusBill", SEND_BILL_DATA_CLEAN)
         ),
-    [SEARCH_DOC_TYPES__DATA_IN_PROGRESS]: state => state.set("loadingDocTypes", true).set("docTypes", []),
+    [SEARCH_DOC_TYPES__DATA_IN_PROGRESS]: state =>
+        state.set("loadingDocTypes", true).set("docTypes", []),
     [SEARCH_DOC_TYPES_DATA_CLEAN]: state =>
         state.withMutations(map =>
             map
@@ -105,7 +125,9 @@ export default createReducer(initialState, {
                 .set("statusDocTypeError", action.payload.err)
         ),
     [SEARCH_DOC_TYPES_DATA_FULFILLED_NO_DATA]: (state, action) =>
-        state.withMutations(map => map.set("loadingDocTypes", false).set("statusDocType", action.type)),
+        state.withMutations(map =>
+            map.set("loadingDocTypes", false).set("statusDocType", action.type)
+        ),
     [SEARCH_DOC_TYPES_DATA_FULFILLED]: (state, action) =>
         state.withMutations(map =>
             map
@@ -132,6 +154,7 @@ export function searchDocTypes() {
 }
 
 export function sendBillData(dniProvider, delegation, bill) {
+    // const = const billValue = _.replace(text, /[^0-9\b]+/g, "");
     return {
         type: SEND_BILL_DATA_REQUESTED,
         payload: {
@@ -192,7 +215,10 @@ export const searchProviderEpic$ = action$ =>
                     }
                     return Observable.of(
                         httpError(SEARCH_PROVIDER_DATA_FAILED, error),
-                        showAlert("Error consultando el proveedor", MESSAGES.ERROR)
+                        showAlert(
+                            "Error consultando el proveedor",
+                            MESSAGES.ERROR
+                        )
                     );
                 })
                 .startWith({ type: SEARCH_PROVIDER_DATA_IN_PROGRESS });
@@ -201,7 +227,17 @@ export const searchProviderEpic$ = action$ =>
 export const sendBillEpic$ = action$ =>
     action$.ofType(SEND_BILL_DATA_REQUESTED).mergeMap(action => {
         const {
-            payload: { dniProvider, delegation, bill: { billPrefix, billSuffix, billArrivalDate, billDate, billValue } }
+            payload: {
+                dniProvider,
+                delegation,
+                bill: {
+                    billPrefix,
+                    billSuffix,
+                    billArrivalDate,
+                    billDate,
+                    billValue
+                }
+            }
         } = action;
         const url = `/v1/bill/`;
         const promise = axios({
@@ -222,7 +258,13 @@ export const sendBillEpic$ = action$ =>
             .concatMap(resultAction =>
                 Observable.of(
                     resultAction,
-                    showAlert(`Radicación exitosa: ${_.get(resultAction, "payload.data.id")}`, MESSAGES.SUCCESS)
+                    showAlert(
+                        `Radicación exitosa: ${_.get(
+                            resultAction,
+                            "payload.data.id"
+                        )}`,
+                        MESSAGES.SUCCESS
+                    )
                 )
             )
             .catch(error => {
@@ -243,12 +285,18 @@ export const sendBillEpic$ = action$ =>
                 if (_.isEqual(statusResponse, 412)) {
                     return Observable.of(
                         httpError(SEND_BILL_DATA_FAILED, error),
-                        showAlert("Ya existe el nùmero de factura para el proveedor seleccionado.", MESSAGES.INFO)
+                        showAlert(
+                            "Ya existe el nùmero de factura para el proveedor seleccionado.",
+                            MESSAGES.INFO
+                        )
                     );
                 }
                 return Observable.of(
                     httpError(SEND_BILL_DATA_FAILED, error),
-                    showAlert("Ocurrió un error inesperado, por favor, intentelo de nuevo.", MESSAGES.WARNING)
+                    showAlert(
+                        "Ocurrió un error inesperado, por favor, intentelo de nuevo.",
+                        MESSAGES.WARNING
+                    )
                 );
             })
             .startWith({ type: SEND_BILL_DATA_IN_PROGRESS });
@@ -272,7 +320,9 @@ export const searchDocTypesEpic$ = action$ =>
                         showAlert("No se econtraron datos.", MESSAGES.INFO)
                     );
                 }
-                return Observable.of(httpError(SEARCH_DOC_TYPES_DATA_FAILED, error));
+                return Observable.of(
+                    httpError(SEARCH_DOC_TYPES_DATA_FAILED, error)
+                );
             })
             .startWith({ type: SEARCH_DOC_TYPES__DATA_IN_PROGRESS });
     });

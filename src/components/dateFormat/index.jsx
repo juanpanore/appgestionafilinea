@@ -116,6 +116,16 @@ export default class DatePickerFormat extends Component {
         });
     }
 
+    componentWillReceiveProps(nextProps) {
+        const { name, onChange } = this.props;
+        const { value } = nextProps;
+        if (_.isEqual(value, "") || !validDate(value)) {
+            const currentDate = moment().format(dateformat);
+            this.setState({ currentDate, textDate: currentDate });
+            onChange(name, currentDate);
+        }
+    }
+
     componentWillUnmount() {
         this.setState({
             minDate: undefined,

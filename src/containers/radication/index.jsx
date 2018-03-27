@@ -153,13 +153,10 @@ class FormRadicacion extends Component {
         setFieldValue("billNumber", val);
     };
 
-    onChangeCurrency = e => {
+    onChangeCurrency = (e, text) => {
         const { setFieldValue } = this.props;
-        const billValue = e.target.value;
-        console.log("Valor q se ingresa: ", billValue);
-        const valueInt = Number(billValue.replace(/[^0-9\b]+/g, ""));
-        console.log("el valor que se le va a mandar a la factura", valueInt);
-        setFieldValue("billValue", valueInt);
+        const billValue = _.replace(text, /[^0-9\b]+/g, "");
+        setFieldValue("billValue", billValue);
     };
 
     searchProvider = (dniType, dniProvider) => {
@@ -310,7 +307,9 @@ class FormRadicacion extends Component {
                                 disabled
                             />
                         </Col>
-                        <Col xs={1}>
+                    </Row>
+                    <Row>
+                        <Col xs={2}>
                             <TextField
                                 floatingLabelText="Micrositio (Si/No)"
                                 name="micrositio"
@@ -393,7 +392,7 @@ class FormRadicacion extends Component {
                                     <CurrencyInput
                                         name="billValue"
                                         value={values.billValue}
-                                        precision={2}
+                                        precision={0}
                                         decimalSeparator=","
                                         thousandSeparator="."
                                         prefix="$"
