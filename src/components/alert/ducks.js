@@ -51,10 +51,9 @@ export function showAlert(message, type, title) {
 }
 
 export const alertEpic$ = action$ =>
-    action$.ofType(TOGGLE_SNACKBAR)
-        .mergeMap(action =>
-            Observable.of({
-                type: OPEN_SNACKBAR,
-                payload: action.payload
-            })
-        );
+    action$.ofType(TOGGLE_SNACKBAR).mergeMap(action =>
+        Observable.of({
+            type: OPEN_SNACKBAR,
+            payload: action.payload
+        })
+    );
