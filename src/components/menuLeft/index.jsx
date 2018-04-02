@@ -51,9 +51,9 @@ const Options = ({ in: inProp }) => (
                         />
                         {/* <Item title="Estado" icon={<StatusIcon />} url="/status" showTitle={inProp && isTransition} /> */}
                         <Item
-                            title="Bandeja"
+                            title="Facturas"
                             icon={<DashboardIcon />}
-                            url="/bandeja"
+                            url="/facturas"
                             showTitle={inProp && isTransition}
                         />
                     </List>

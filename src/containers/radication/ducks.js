@@ -30,8 +30,8 @@ const SEND_BILL_DATA_CLEAN = "payments/bills-settlement/SEND_BILL_DATA_CLEAN";
 
 const SEARCH_DOC_TYPES_DATA_REQUESTED =
     "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_REQUESTED";
-const SEARCH_DOC_TYPES__DATA_IN_PROGRESS =
-    "payments/bills-settlement/SEARCH_DOC_TYPES__DATA_IN_PROGRESS";
+const SEARCH_DOC_TYPES_DATA_IN_PROGRESS =
+    "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_IN_PROGRESS";
 export const SEARCH_DOC_TYPES_DATA_FULFILLED =
     "payments/bills-settlement/SEARCH_DOC_TYPES_DATA_FULFILLED";
 const SEARCH_DOC_TYPES_DATA_FAILED =
@@ -107,7 +107,7 @@ export default createReducer(initialState, {
                 .set("statusBillError", "")
                 .set("statusBill", SEND_BILL_DATA_CLEAN)
         ),
-    [SEARCH_DOC_TYPES__DATA_IN_PROGRESS]: state =>
+    [SEARCH_DOC_TYPES_DATA_IN_PROGRESS]: state =>
         state.set("loadingDocTypes", true).set("docTypes", []),
     [SEARCH_DOC_TYPES_DATA_CLEAN]: state =>
         state.withMutations(map =>
@@ -191,38 +191,6 @@ const httpFulfilled = action => response => ({
         data: response.data
     }
 });
-
-export const searchProviderEpic$ = action$ =>
-    action$
-        .ofType(SEARCH_PROVIDER_DATA_REQUESTED)
-        .debounceTime(400)
-        .mergeMap(action => {
-            const { payload: { idType, id } } = action;
-            const url = `/v1/provider/${idType + id}`;
-            const promise = axios.get(url);
-            return Observable.fromPromise(promise)
-                .map(httpFulfilled(SEARCH_PROVIDER_DATA_FULFILLED_DATA))
-                .concatMap(resultAction => Observable.of(resultAction))
-                .catch(error => {
-                    const { response } = error;
-                    if (_.isEqual(_.get(response, "status"), 404)) {
-                        return Observable.of(
-                            {
-                                type: SEARCH_PROVIDER_DATA_FULFILLED_NO_DATA
-                            },
-                            showAlert("Proveedor no encontrado", MESSAGES.INFO)
-                        );
-                    }
-                    return Observable.of(
-                        httpError(SEARCH_PROVIDER_DATA_FAILED, error),
-                        showAlert(
-                            "Error consultando el proveedor",
-                            MESSAGES.ERROR
-                        )
-                    );
-                })
-                .startWith({ type: SEARCH_PROVIDER_DATA_IN_PROGRESS });
-        });
 
 export const sendBillEpic$ = action$ =>
     action$.ofType(SEND_BILL_DATA_REQUESTED).mergeMap(action => {
@@ -324,5 +292,5 @@ export const searchDocTypesEpic$ = action$ =>
                     httpError(SEARCH_DOC_TYPES_DATA_FAILED, error)
                 );
             })
-            .startWith({ type: SEARCH_DOC_TYPES__DATA_IN_PROGRESS });
+            .startWith({ type: SEARCH_DOC_TYPES_DATA_IN_PROGRESS });
     });

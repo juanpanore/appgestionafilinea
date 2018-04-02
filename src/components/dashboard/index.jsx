@@ -22,14 +22,14 @@ const styles = {
         position: "absolute",
         top: 0,
         left: 0,
-        display: "table",
+        display: "table"
     },
     contentRoute: {
         padding: 0,
         margin: 0,
         width: "100%",
         height: "100%",
-        display: "table",
+        display: "table"
     },
     contentBody: {
         boxSizing: "border-box",
@@ -37,19 +37,19 @@ const styles = {
         width: "100%",
         padding: 0,
         display: "table-row",
-        height: "100%",
+        height: "100%"
     },
     contentCol: {
         boxSizing: "border-box",
         margin: 0,
         padding: 0,
-        display: "table-cell",
+        display: "table-cell"
     },
     contentRouteRow: {
         display: "table-row",
         width: "100%",
         margin: 0,
-        boxSizing: "border-box",
+        boxSizing: "border-box"
     },
     contentRouteColMenu: {
         display: "table-cell",
@@ -58,7 +58,7 @@ const styles = {
         verticalAlign: "top",
         borderRight: `1px solid ${grey300}`,
         width: menuSmall,
-        transition: `width ${durationMenu}ms linear`,
+        transition: `width ${durationMenu}ms linear`
     },
     contentRouteCol: {
         display: "table-cell",
@@ -68,16 +68,21 @@ const styles = {
         overflowY: "auto",
         verticalAlign: "top",
         padding: 0,
-        margin: 0,
+        margin: 0
     },
     routeMenu: {
         height: "100%",
         overflowX: "hidden",
         overflowY: "auto",
         width: menuSmall,
-        transition: `width ${durationMenu}ms linear`,
+        transition: `width ${durationMenu}ms linear`
     },
-    route: { width: "100%", height: "100%", overflowX: "hidden", overflowY: "auto" },
+    route: {
+        width: "100%",
+        height: "100%",
+        overflowX: "hidden",
+        overflowY: "auto"
+    }
 };
 
 function getStyleTransition(state) {
@@ -96,7 +101,13 @@ const ContentMenu = ({ in: inProp }) => (
         {state => {
             const styleTransition = getStyleTransition(state);
             return (
-                <Col style={assign({}, styles.contentRouteColMenu, styleTransition)}>
+                <Col
+                    style={assign(
+                        {},
+                        styles.contentRouteColMenu,
+                        styleTransition
+                    )}
+                >
                     <div style={assign({}, styles.routeMenu, styleTransition)}>
                         <MenuLeft />
                     </div>
@@ -107,13 +118,13 @@ const ContentMenu = ({ in: inProp }) => (
 );
 
 ContentMenu.propTypes = {
-    in: PropTypes.bool.isRequired,
+    in: PropTypes.bool.isRequired
 };
 
 class MenuBar extends PureComponent {
     static propTypes = {
         title: PropTypes.string.isRequired,
-        openMenu: PropTypes.bool.isRequired,
+        openMenu: PropTypes.bool.isRequired
     };
 
     render() {
@@ -128,11 +139,19 @@ class MenuBar extends PureComponent {
                                 <ContentMenu in={openMenu} />
                                 <Col xs style={styles.contentRouteCol}>
                                     <div style={styles.route}>
-
-                                            <Route path="/bandeja" component={BillList} />
-                                            <Route path="/status" component={Status} />
-                                            <Route exact path="/" component={FormRadicacion} />
-
+                                        <Route
+                                            path="/facturas"
+                                            component={BillList}
+                                        />
+                                        <Route
+                                            path="/status"
+                                            component={Status}
+                                        />
+                                        <Route
+                                            exact
+                                            path="/"
+                                            component={FormRadicacion}
+                                        />
                                     </div>
                                 </Col>
                             </Row>
@@ -146,7 +165,7 @@ class MenuBar extends PureComponent {
 
 function mapStateToProps({ menuLeft }) {
     return {
-        openMenu: menuLeft.get("openMenu"),
+        openMenu: menuLeft.get("openMenu")
     };
 }
 

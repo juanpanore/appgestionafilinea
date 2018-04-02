@@ -1,78 +1,72 @@
 import React, { Component } from "react";
 import { func } from "prop-types";
+import { Tabs, Tab } from "material-ui/Tabs";
+import { blue900, blue50 } from "material-ui/styles/colors";
 import { connect } from "react-redux";
-import { Row, Col } from "react-flexbox-grid";
-import { white } from "material-ui/styles/colors";
-import SearchIcon from "material-ui/svg-icons/action/search";
-import TextField from "material-ui/TextField";
-import DropDownMenu from "material-ui/DropDownMenu";
-import MenuItem from "material-ui/MenuItem";
 import { bindActionCreators } from "redux";
-import { searchBill as sb } from "./ducks";
 import Content from "../../components/content";
+import PaySoon from "./components/paySoon";
+import PayNoSoon from "./components/payNoSoon";
+import { searchDocTypes as sdt, cleanBill as cb } from "./ducks";
 
-class SearchPreventionBill extends Component {
+const styles = {
+    buttonTab: {
+        backgroundColor: blue50,
+        color: blue900
+    }
+};
+
+class Bills extends Component {
     static propTypes = {
-        searchBill: func.isRequired,
+        searchDocTypes: func.isRequired,
+        cleanBill: func.isRequired
     };
 
     state = {
-        dniType: "",
-        searchText: "",
+        value: "paysoon"
     };
 
-    componentWillUnmount() {}
+    componentWillMount() {
+        const { searchDocTypes } = this.props;
+        searchDocTypes();
+    }
 
-    handleChangeDniType = (e, i, value) => {
-        this.setState({ dniType: value });
-    };
+    componentWillUnmount() {
+        const { cleanBill } = this.props;
+        cleanBill();
+    }
 
-    handleChangeText = (e, text) => this.setState({ searchText: text });
-
-    handleSubmit = event => {
-        event.preventDefault();
-        const { dniType, searchText } = this.state;
-        this.props.searchBill(dniType, searchText);
+    handleChange = value => {
+        this.setState({ value });
     };
 
     render() {
+        const { value } = this.state;
         return (
-            <Content>
-                <Row>
-                    <Col xs={1}>
-                        <SearchIcon color={white} />
-                    </Col>
-                    <Col xs={3}>
-                        <DropDownMenu value={this.state.dniType} onChange={this.handleChangeDniType}>
-                            <MenuItem value="" primaryText="Tipo" disabled />
-                            <MenuItem value="N" primaryText="NIT" />
-                            <MenuItem value="C" primaryText="CC" />
-                            <MenuItem value="E" primaryText="CE" />
-                        </DropDownMenu>
-                    </Col>
-                    <Col xs={8}>
-                        <form onSubmit={this.handleSubmit}>
-                            <TextField
-                                hintText="Buscar..."
-                                value={this.state.searchText}
-                                onChange={this.handleChangeText}
-                            />
-                        </form>
-                    </Col>
-                </Row>
+            <Content paddingLeft={0} paddingRight={0} paddingTop={0}>
+                <Tabs value={value} onChange={this.handleChange}>
+                    <Tab
+                        label="Pronto pago"
+                        value="paysoon"
+                        buttonStyle={styles.buttonTab}
+                    >
+                        <PaySoon />
+                    </Tab>
+                    <Tab
+                        label="Sin pronto pago"
+                        value="paynosoon"
+                        buttonStyle={styles.buttonTab}
+                    >
+                        <PayNoSoon />
+                    </Tab>
+                </Tabs>
             </Content>
         );
     }
 }
 
-function mapStateToProps({ searchPreventionBill }) {
-    return {
-        loading: searchPreventionBill.get("loading"),
-    };
-}
-
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ searchBill: sb }, dispatch);
+    return bindActionCreators({ searchDocTypes: sdt, cleanBill: cb }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchPreventionBill);
+export default connect(null, mapDispatchToProps)(Bills);
