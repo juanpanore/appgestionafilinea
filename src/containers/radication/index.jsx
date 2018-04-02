@@ -23,10 +23,7 @@ import {
     searchDocTypes as sdt,
     SEND_BILL_DATA_FULFILLED
 } from "./ducks";
-import {
-    showCollapse as sc,
-    closeCollapse as cc
-} from "../../components/contentCollapse/ducks";
+import { showCollapse as sc, closeCollapse as cc } from "../../components/contentCollapse/ducks";
 import { showAlert as sa } from "../../components/alert/ducks";
 import { MESSAGES } from "../../components/alert/types";
 import DatePickerFormat from "../../components/dateFormat";
@@ -46,7 +43,6 @@ class FormRadicacion extends Component {
         cleanData: func.isRequired,
         searchDocTypes: func.isRequired,
         cleanBillData: func.isRequired,
-        // provider: shape().isRequired,
         loadingProvider: bool.isRequired,
         sendingBill: bool.isRequired,
         statusBill: string.isRequired,
@@ -66,7 +62,7 @@ class FormRadicacion extends Component {
             micrositio: PropTypes.string,
             billNumber: PropTypes.string,
             billPrefix: PropTypes.string,
-            billSuffix: PropTypes.number,
+            billSuffix: PropTypes.string,
             billValue: PropTypes.number,
             lastSettlement: PropTypes.string,
             billDate: PropTypes.string,
@@ -99,8 +95,13 @@ class FormRadicacion extends Component {
     };
 
     state = {
-        idCollapse: "content-info-radication"
+        idCollapse: "content-info-radication",
+        lastfiled: ""
     };
+
+    componentWillMount() {
+        this.searchLastFiled();
+    }
 
     componentDidMount() {
         const { searchDocTypes, cleanData, cleanBillData } = this.props;
@@ -110,34 +111,15 @@ class FormRadicacion extends Component {
     }
 
     componentDidUpdate() {
-        const {
-            statusBill,
-            values,
-            setFieldValue,
-            closeCollapse /* ,
-      showCollapse */
-        } = this.props;
-        const idRadicado = _.get(values, "id", 0);
-        // const { idCollapse } = this.state;
-        /* const providerName = _.get(provider, "providerName", "");
-    const microsite = _.get(provider, "micrositio", false) ? "Sí" : "No";
-    const idRadicado = _.get(values, "id", 0);
-    // const docTypeValue = _.get(docTypes, "value", "");
-    if (!_.isEqual(providerName, _.get(values, "name"))) {
-      setFieldValue("name", providerName);
-    } //  _.get(values, 'micrositio', "")
-    if (microsite !== "") {
-      setFieldValue("micrositio", microsite);
-      // showCollapse(idCollapse);
-    } */
+        const { statusBill, closeCollapse } = this.props;
 
         if (_.isEqual(statusBill, SEND_BILL_DATA_FULFILLED)) {
             const { idCollapse } = this.state;
             this.props.resetForm();
-            setFieldValue("idRadicado", idRadicado);
             this.props.cleanData();
             this.props.cleanBillData();
             closeCollapse(idCollapse);
+            this.searchLastFiled();
         }
     }
 
@@ -148,9 +130,18 @@ class FormRadicacion extends Component {
 
     onBillSuffixChange = e => {
         const { setFieldValue, values } = this.props;
-        setFieldValue("billSuffix", e.target.value);
         const val = values.billPrefix + e.target.value;
+        setFieldValue("billSuffix", e.target.value);
         setFieldValue("billNumber", val);
+    };
+
+    onBillPrefixChange = e => {
+        const { setFieldValue, values } = this.props;
+        setFieldValue("billPrefix", e.target.value);
+        if (values.billSuffix !== undefined) {
+            const val = e.target.value + values.billSuffix;
+            setFieldValue("billNumber", val);
+        } else setFieldValue("billNumber", e.target.value);
     };
 
     onChangeCurrency = (e, text) => {
@@ -160,33 +151,17 @@ class FormRadicacion extends Component {
     };
 
     searchProvider = (dniType, dniProvider) => {
-        const {
-            showCollapse,
-            closeCollapse,
-            setFieldValue,
-            showAlert,
-            values
-        } = this.props;
+        const { showCollapse, closeCollapse, setFieldValue, showAlert, values } = this.props;
         const { idCollapse } = this.state;
         const id = dniType + dniProvider;
         apiAxios
             .get(`v1/provider/${id}`)
             .then(response => {
-                // console.log(values);
-                // console.log(response);
-                // console.log(_.get(response, "status"));
                 if (_.isEqual(_.get(response, "status"), 200)) {
-                    setFieldValue(
-                        "name",
-                        _.get(response, "data.providerName", "")
-                    );
-                    // this.setState({ providerDelegation: response.data.dniDelegation });
+                    setFieldValue("name", _.get(response, "data.providerName", ""));
                     values.providerDelegation = response.data.dniDelegation;
-                    // console.log("delegación: ", values.providerDelegation);
                     const microsite = response.data.micrositio ? "Si" : "No";
                     setFieldValue("micrositio", microsite);
-                    // const delegation = values.providerDelegation;
-                    // console.log("Se obtuvo la delegación: ", delegation);
                     showCollapse(idCollapse);
                 } else {
                     setFieldValue("name", "");
@@ -201,6 +176,14 @@ class FormRadicacion extends Component {
                 closeCollapse(idCollapse);
                 showAlert("No se encontró proveedor.", MESSAGES.INFO);
             });
+    };
+
+    searchLastFiled = () => {
+        apiAxios.get(`/v1/bill/lastSettlement`).then(response => {
+            if (_.isEqual(_.get(response, "status"), 200)) {
+                this.setState({ lastfiled: response.data });
+            }
+        });
     };
 
     render() {
@@ -230,9 +213,7 @@ class FormRadicacion extends Component {
                             <SelectField
                                 floatingLabelText="Tipo identificación"
                                 value={values.dniType}
-                                onChange={(e, key, value) =>
-                                    setFieldValue("dniType", value)
-                                }
+                                onChange={(e, key, value) => setFieldValue("dniType", value)}
                                 errorText={touched.dniType && errors.dniType}
                                 fullWidth
                                 dropDownMenuProps={{
@@ -264,17 +245,11 @@ class FormRadicacion extends Component {
                                 onChange={handleChange}
                                 onKeyPress={e => {
                                     if (e.key === "Enter") {
-                                        this.searchProvider(
-                                            values.dniType,
-                                            values.dniProvider,
-                                            setFieldValue()
-                                        );
+                                        this.searchProvider(values.dniType, values.dniProvider, setFieldValue());
                                     }
                                 }}
                                 maxLength={20}
-                                errorText={
-                                    touched.dniProvider && errors.dniProvider
-                                }
+                                errorText={touched.dniProvider && errors.dniProvider}
                                 fullWidth
                                 disabled={loadingProvider}
                             />
@@ -301,19 +276,13 @@ class FormRadicacion extends Component {
                                 style={{ width: 130 }}
                                 value={values.micrositio}
                                 onChange={handleChange}
-                                errorText={
-                                    touched.micrositio && errors.micrositio
-                                }
+                                errorText={touched.micrositio && errors.micrositio}
                                 fullWidth
                                 disabled
                             />
                         </Col>
                     </Row>
-                    <ContentCollapse
-                        id={idCollapse}
-                        visibleButton={false}
-                        paddingContent={0}
-                    >
+                    <ContentCollapse id={idCollapse} visibleButton={false} paddingContent={0}>
                         <Row>
                             <Col>
                                 <p>Información de factura</p>
@@ -326,11 +295,9 @@ class FormRadicacion extends Component {
                                     floatingLabelText="Prefijo factura"
                                     name="billPrefix"
                                     value={values.billPrefix}
-                                    onChange={handleChange}
+                                    onChange={this.onBillPrefixChange}
                                     onInput={e => {
-                                        e.target.value = e.target.value
-                                            .toString()
-                                            .slice(0, 6);
+                                        e.target.value = e.target.value.toString().slice(0, 6);
                                     }}
                                 />
                             </Col>
@@ -342,13 +309,9 @@ class FormRadicacion extends Component {
                                     type="number"
                                     onChange={this.onBillSuffixChange}
                                     onInput={e => {
-                                        e.target.value = e.target.value
-                                            .toString()
-                                            .slice(0, 10);
+                                        e.target.value = e.target.value.toString().slice(0, 10);
                                     }}
-                                    errorText={
-                                        touched.billSuffix && errors.billSuffix
-                                    }
+                                    errorText={touched.billSuffix && errors.billSuffix}
                                 />
                             </Col>
                             <Col xs>
@@ -357,9 +320,7 @@ class FormRadicacion extends Component {
                                     name="billNumber"
                                     value={values.billNumber}
                                     onChange={handleChange}
-                                    errorText={
-                                        touched.billNumber && errors.billNumber
-                                    }
+                                    errorText={touched.billNumber && errors.billNumber}
                                     disabled
                                 />
                             </Col>
@@ -369,9 +330,7 @@ class FormRadicacion extends Component {
                                     name="billValue"
                                     type="number"
                                     onChange={handleChange}
-                                    errorText={
-                                        touched.billValue && errors.billValue
-                                    }
+                                    errorText={touched.billValue && errors.billValue}
                                 >
                                     <CurrencyInput
                                         name="billValue"
@@ -389,9 +348,7 @@ class FormRadicacion extends Component {
                                     floatingLabelText="Fecha factura"
                                     name="billDate"
                                     onChange={this.onChangeValueDate}
-                                    errorText={
-                                        touched.billDate && errors.billDate
-                                    }
+                                    errorText={touched.billDate && errors.billDate}
                                     value={values.billDate}
                                 />
                             </Col>
@@ -400,10 +357,7 @@ class FormRadicacion extends Component {
                                     floatingLabelText="Fecha llegada"
                                     name="billArrivalDate"
                                     onChange={this.onChangeValueDate}
-                                    errorText={
-                                        touched.billArrivalDate &&
-                                        errors.billArrivalDate
-                                    }
+                                    errorText={touched.billArrivalDate && errors.billArrivalDate}
                                     value={values.billArrivalDate}
                                 />
                             </Col>
@@ -429,7 +383,7 @@ class FormRadicacion extends Component {
                                     marginBottom: 10
                                 }}
                             >
-                                Último radicado: {values.idRadicado}
+                                Último radicado: {this.state.lastfiled}
                             </div>
                         </Col>
                     </Row>
@@ -443,10 +397,7 @@ const validateDates = values => {
     const errors = {};
     const Oldyears = moment().subtract(5, "years");
     const oldYear = moment().subtract(1, "years");
-    const isValidBillDate = checkNotNull(
-        _.get(values, "billDate"),
-        "Se requiere la fecha de factura."
-    );
+    const isValidBillDate = checkNotNull(_.get(values, "billDate"), "Se requiere la fecha de factura.");
     const isValidBillArrivalDate = checkNotNull(
         _.get(values, "billArrivalDate"),
         "Se requiere la fecha de llegada de la factura."
@@ -458,69 +409,43 @@ const validateDates = values => {
             errors.billDate = "La fecha es superior a la fecha actual.";
         }
         if (moment(values.billDate, dateformat).isBefore(Oldyears, "day")) {
-            errors.billDate =
-                "La fecha no puede ser 5 años anterior a la fecha actual.";
+            errors.billDate = "La fecha no puede ser 5 años anterior a la fecha actual.";
         }
     }
 
     if (!_.isUndefined(isValidBillArrivalDate)) {
         errors.billArrivalDate = isValidBillArrivalDate;
     } else {
-        if (
-            moment(values.billArrivalDate, dateformat).isAfter(moment(), "day")
-        ) {
+        if (moment(values.billArrivalDate, dateformat).isAfter(moment(), "day")) {
             errors.billArrivalDate = "La fecha es superior a la fecha actual.";
         }
         if (_.isUndefined(isValidBillDate)) {
-            if (
-                moment(values.billArrivalDate, dateformat).isBefore(
-                    moment(values.billDate, dateformat),
-                    "day"
-                )
-            ) {
-                errors.billArrivalDate =
-                    "Fecha inferior a la fecha de factura.";
+            if (moment(values.billArrivalDate, dateformat).isBefore(moment(values.billDate, dateformat), "day")) {
+                errors.billArrivalDate = "Fecha inferior a la fecha de factura.";
             }
         }
-        if (
-            moment(values.billArrivalDate, dateformat).isBefore(oldYear, "day")
-        ) {
-            errors.billArrivalDate =
-                "Fecha anterior a un año de la fecha actual.";
+        if (moment(values.billArrivalDate, dateformat).isBefore(oldYear, "day")) {
+            errors.billArrivalDate = "Fecha anterior a un año de la fecha actual.";
         }
     }
     return errors;
 };
 
 const validateRequired = values => {
-    // console.log(values);
     const errors = {
-        dniType: checkNotNull(
-            _.get(values, "dniType"),
-            "Se requiere el tipo de DNI."
-        ),
-        dniProvider: checkNotNull(
-            _.get(values, "dniProvider"),
-            "Se requiere DNI del proveedor."
-        ),
-        name: checkNotNull(
-            _.get(values, "name"),
-            "Se requiere el nombre del proveedor."
-        ),
+        dniType: checkNotNull(_.get(values, "dniType"), "Se requiere el tipo de DNI."),
+        dniProvider: checkNotNull(_.get(values, "dniProvider"), "Se requiere DNI del proveedor."),
+        name: checkNotNull(_.get(values, "name"), "Se requiere el nombre del proveedor."),
         billSuffix: checkArgument(
-            _.get(values, "billSuffix") <= 0,
+            _.get(values, "billSuffix") === "",
             "El valor del sufijo de factura debe ser mayor a cero."
         ),
-        billValue: checkArgument(
-            _.get(values, "billValue") <= 0,
-            "El valor de la factura debe ser mayor a cero."
-        )
+        billValue: checkArgument(_.get(values, "billValue") <= 0, "El valor de la factura debe ser mayor a cero.")
     };
     return _.omitBy(errors, _.isNil);
 };
 
-const validate = values =>
-    _.assign({}, validateRequired(values), validateDates(values));
+const validate = values => _.assign({}, validateRequired(values), validateDates(values));
 
 const formikComponent = withFormik({
     mapPropsToValues: ({ provider }) => {
@@ -533,7 +458,7 @@ const formikComponent = withFormik({
             micrositio: microsite,
             billNumber: "",
             billPrefix: "",
-            billSuffix: 0,
+            billSuffix: "",
             billValue: 0,
             billDate: "",
             billArrivalDate: "",
@@ -542,20 +467,8 @@ const formikComponent = withFormik({
     },
     validate,
     handleSubmit: (values, { props }) => {
-        const valuesToSend = _.mapValues(
-            values,
-            value =>
-                /* if (_.isDate(value)) {
-        return moment(value).format("DD/MM/YYYY");
-      } */
-                value
-        );
-        // console.log("Lo que obtiene: ", values.providerDelegation);
-        props.sendBillData(
-            valuesToSend.dniType + valuesToSend.dniProvider,
-            21,
-            valuesToSend
-        );
+        const valuesToSend = _.mapValues(values, value => value);
+        props.sendBillData(valuesToSend.dniType + valuesToSend.dniProvider, 21, valuesToSend);
     }
 });
 
