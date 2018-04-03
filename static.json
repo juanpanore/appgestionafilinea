@@ -1,5 +1,5 @@
 { 
-  "index": "index.html",
+  "root": "static/",
   "https_only": true,
   "headers": {
     "/**": {
