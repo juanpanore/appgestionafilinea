@@ -17,7 +17,7 @@ const conf = merge(common, {
     mode: "production",
     entry: path.resolve(__dirname, "./src/index.jsx"),
     output: {
-        path: path.resolve(__dirname, "dist", "gestionpagosprevencion"),
+        path: path.resolve(__dirname, "dist", "gestionafilineaarl"),
         filename: "[name]-[chunkhash].js",
         chunkFilename: "[name]-[chunkhash].js",
         publicPath: ""
@@ -33,7 +33,7 @@ const conf = merge(common, {
             parallel: true
         }),
         new HtmlWebpackPlugin({
-            title: "Prevención ARL",
+            title: "Gestion Afilinea ARL",
             inject: "body",
             template: "static/indexProduction.html"
         })
