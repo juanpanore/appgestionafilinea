@@ -12,7 +12,7 @@ module.exports = merge(common, {
     devtool: "inline-source-map",
     entry: [
         "react-hot-loader/patch",
-        `webpack-dev-server/client?http://localhost:${serverPort}`,
+        `webpack-dev-server/client?https://appgestionafilineaarllabo.herokuapp.com`,
         "webpack/hot/only-dev-server",
         path.resolve(__dirname, "src", "index.jsx")
     ],
