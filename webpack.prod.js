@@ -1,42 +1,31 @@
-const path = require("path");
 // eslint-disable-next-line
 const merge = require("webpack-merge");
 // eslint-disable-next-line
 const webpack = require("webpack");
-// eslint-disable-next-line
-const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-// eslint-disable-next-line
-const CleanWebpackPlugin = require("clean-webpack-plugin");
-// eslint-disable-next-line
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-// eslint-disable-next-line
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const common = require("./webpack.common");
+const path = require("path");
+const common = require("./webpack.common.js");
 
-const conf = merge(common, {
-    mode: "production",
-    entry: path.resolve(__dirname, "./src/index.jsx"),
+const serverPort = 9630;
+
+module.exports = merge(common, {
+    mode: "development",
+    devtool: "inline-source-map",
+    entry: [
+        "react-hot-loader/patch",
+        `webpack-dev-server/client?https://appgestionafilineaarllabo.herokuapp.com`,
+        "webpack/hot/only-dev-server",
+        path.resolve(__dirname, "src", "index.jsx")
+    ],
     output: {
-        path: path.resolve(__dirname, "dist", "gestionafilineaarl"),
-        filename: "[name]-[chunkhash].js",
-        chunkFilename: "[name]-[chunkhash].js",
-        publicPath: ""
+        path: path.join(__dirname, "dist"),
+        filename: "bundle.js"
     },
-    devtool: "source-map",
-    plugins: [
-        new webpack.DefinePlugin({
-            "process.env.NODE_ENV": JSON.stringify("production")
-        }),
-        new CleanWebpackPlugin(["dist"]),
-        new UglifyJSPlugin({
-            sourceMap: true,
-            parallel: true
-        }),
-        new HtmlWebpackPlugin({
-            title: "Gestion Afilinea ARL",
-            inject: "body",
-            template: "static/indexProduction.html"
-        })
-    ]
+    devServer: {
+        publicPath: "/public/",
+        historyApiFallback: true,
+        open: true,
+        port: serverPort,
+        hot: true
+    },
+    plugins: [new webpack.HotModuleReplacementPlugin()]
 });
-module.exports = conf;
